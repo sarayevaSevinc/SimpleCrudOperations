@@ -16,12 +16,13 @@ public interface UserService  {
 
     User create(User user);
 
-    User getUserbyId(UUID id);
+    User getUserById(int id);
 
-     Optional<User> getUserbyName(String name);
+    User getUserByName(String name);
+
      User updateUser(User user);
 
-   void deleteUserById(UUID id);
+   void deleteUserById(int id);
 
 
 

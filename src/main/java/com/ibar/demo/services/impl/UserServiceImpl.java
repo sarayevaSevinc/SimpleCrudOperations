@@ -6,50 +6,52 @@ import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
 
-public class UserServiceImpl  implements UserService {
+@Service
+public class UserServiceImpl implements UserService {
 
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public User create(User user){
+    public User create(User user) {
         return userRepository.save(user);
     }
 
-    public User getUserbyId(UUID id){
-        return  userRepository.getUserById(id).filter(user -> user.getStatus()!= Status.DELETED)
-                .orElseThrow(()->new IllegalArgumentException("there is no any user with this id"));
+
+    @Override
+    public User getUserById(int id) {
+        return userRepository.getUserById(id).filter(user -> user.getStatus() != Status.DELETED)
+                .orElseThrow(() -> new IllegalArgumentException("there is no any user with this id"));
     }
 
-    public Optional<User> getUserbyName(String name){
+    @Override
+    public User getUserByName(String name) {
+ return userRepository.getUserByName(name).filter(x->x.getStatus()!=(Status.DELETED))
+         .orElseThrow(()->new IllegalArgumentException("there is no user with this id"));
 
-        return userRepository.getUserByName(name);
     }
-    public User updateUser(User user){
+
+    @Override
+    public User updateUser(User user) {
         user.setStatus(Status.UPDATED);
         return create(user);
     }
 
-    public void deleteUserById(UUID id){
-        User user = getUserbyId(id);
+    @Override
+    public void deleteUserById(int id) {
+        User user = getUserById(id);
         user.setStatus(Status.DELETED);
         create(user);
     }
 
 
-
     @Bean
-    public  void  addUser(){
-        User build = User.builder().name("test7")
-                .surname("trst3rf")
-                .cardNumber("95748574")
-                .pin("45784rh4ut")
-                .phone("49595475p")
+    public void addUser() {
+        User build = new User.UserBuilder("name", "surname", "caifef", "efeof", "4854958")
                 .build();
 
         create(build);
@@ -60,12 +62,12 @@ public class UserServiceImpl  implements UserService {
 //    }
 //    @Bean
 //    public void updateUser(){
-//       User user = getUserbyId(4);
+//       User user = getUserById(1);
 //       user.setName("updatedUser");
 //        updateUser(user);
 //    }
 //    @Bean
 //    public void deleteUser(){
-//        deleteUserById(7);
+//        deleteUserById(1);
 //    }
 }
