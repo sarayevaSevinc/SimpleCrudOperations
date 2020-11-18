@@ -65,7 +65,7 @@ public class User implements Serializable {
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     private LocalDateTime createdTime;
 
-    @Column(name = "updatedTime",)
+    @Column(name = "updatedTime")
     @UpdateTimestamp
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     private LocalDateTime updatedTime;
