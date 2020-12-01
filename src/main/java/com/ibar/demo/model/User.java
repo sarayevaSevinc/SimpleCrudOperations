@@ -8,6 +8,10 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,9 +26,11 @@ public class User implements Serializable, Persistable<UUID> {
 
 
     @Id
+    @NotNull
     private UUID id;
 
     @Field("name")
+    @NotNull
     private String name;
 
 
@@ -37,10 +43,12 @@ public class User implements Serializable, Persistable<UUID> {
 
 
     @Field("birthday")
+    @Past
     private LocalDate birthday;
 
 
     @Field("pin")
+    @NotNull
     private String pin;
 
 
@@ -61,12 +69,14 @@ public class User implements Serializable, Persistable<UUID> {
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @CreatedDate
     @Field("createdTime")
+    @PastOrPresent
     private LocalDateTime createdTime;
 
 
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @LastModifiedDate
     @Field("updatedTime")
+    @PastOrPresent
     private LocalDateTime updatedTime;
 
     @Field("persisted")
