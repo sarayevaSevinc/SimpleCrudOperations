@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -26,21 +27,28 @@ public class ServiceImplTest {
     @Test
      void getUserByIdTest() {
         // set up
-        User user = new User.UserBuilder("test3", "test4", "cardnumber", "45845h", "phone")
-                .setId(5)
-                .setAge(20)
+        User user = User.build()
+                .name("test3")
+                .surname("test4")
+                .cardNumber("cardnumber")
+                .pin("45845h")
+                .phone("phone")
                 .build();
-        Mockito.when(userRepository.getUserById(5)).thenReturn(Optional.of(user));
-        User userbyId = userService.getUserById(5);
+        UUID uuid = UUID.randomUUID();
+        Mockito.when(userRepository.getUserById(uuid)).thenReturn(Optional.of(user));
+        User userbyId = userService.getUserById(UUID.randomUUID());
         Assertions.assertEquals(userbyId, user);
     }
 
     @Test
     void getUserByNameTest(){
         // set up
-        User user = new User.UserBuilder("test3", "test4", "cardnumber", "45845h", "phone")
-                .setId(5)
-                .setAge(20)
+        User user = User.build()
+                .name("test3")
+                .surname("test4")
+                .cardNumber("cardnumber")
+                .pin("45845h")
+                .phone("phone")
                 .build();
         Mockito.when(userRepository.getUserByName("test3")).thenReturn(Optional.of(user));
         User actualResult = userService.getUserByName("test3");
@@ -49,9 +57,12 @@ public class ServiceImplTest {
  @Test
     void updateUserTest(){
      // set up
-     User user = new User.UserBuilder("test3", "test4", "cardnumber", "45845h", "phone")
-             .setId(5)
-             .setAge(20)
+     User user = User.build()
+             .name("test3")
+             .surname("test4")
+             .cardNumber("cardnumber")
+             .pin("45845h")
+             .phone("phone")
              .build();
      Mockito.when(userRepository.save(user)).thenReturn(user);
      User actualResult = userService.updateUser(user);

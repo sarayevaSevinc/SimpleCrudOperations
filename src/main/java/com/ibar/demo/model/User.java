@@ -1,127 +1,174 @@
 package com.ibar.demo.model;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "IBA_USERS")
 @AllArgsConstructor
 @NoArgsConstructor
-//@Builder(builderClassName = "Builder", toBuilder = true)
-public class User implements Serializable {
+@Document(collection = "IBA_USERS")
+public class User implements Serializable, Persistable<UUID> {
 
 
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "PersonSequence")
     @Id
-    private int id;
+    private UUID id;
 
-    @NonNull
-    @Column(name = "name")
+    @Field("name")
     private String name;
 
-    @NonNull
-    @Column(name = "surname")
+
+    @Field("surname")
     private String surname;
 
-    @Column(name = "age")
+
+    @Field("age")
     private int age;
 
-    @Column(name = "birthday")
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+
+    @Field("birthday")
     private LocalDate birthday;
 
-    @NonNull
-    @Column(name = "pin")
+
+    @Field("pin")
     private String pin;
 
-    @NonNull
-    @Column(name = "cardNumber")
+
+    @Field("cardNumber")
     private String cardNumber;
 
-    @Column(name = "gender")
+
+    @Field("gender")
     private String gender;
 
-    @NonNull
-    @Column(name = "phone")
+    @Field("phone")
     private String phone;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status")
+    @Field("status")
     private Status status;
 
 
-    @Column(name = "createdTime", nullable = false)
-    @CreationTimestamp
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
+    @CreatedDate
+    @Field("createdTime")
     private LocalDateTime createdTime;
 
-    @Column(name = "updatedTime")
-    @UpdateTimestamp
+
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
+    @LastModifiedDate
+    @Field("updatedTime")
     private LocalDateTime updatedTime;
 
-    @PrePersist
-    void preInsert() {
-        if (this.status == null)
-            this.status = Status.CREATED;
+    @Field("persisted")
+    private boolean persisted;
+
+    public User(Builder builder) {
+        this.setName(builder.name);
+        this.setSurname(builder.surname);
+        this.setPhone(builder.phone);
+        this.setCardNumber(builder.cardNumber);
+        this.setPin(builder.pin);
+        this.setId(builder.id);
+        this.setAge(builder.age);
+        this.setGender(builder.gender);
+        this.setBirthday(builder.birthday);
+        this.setPersisted(builder.persisted);
+
     }
 
-    public User(UserBuilder userBuilder) {
-        this.setName(userBuilder.name);
-        this.setSurname(userBuilder.surname);
-        this.setPhone(userBuilder.phone);
-        this.setCardNumber(userBuilder.cardNumber);
-        this.setPin(userBuilder.pin);
+    @Override
+    public boolean isNew() {
+        if (!persisted) this.setStatus(Status.CREATED);
+        return !persisted;
     }
 
-    public static class UserBuilder {
-        private int id;
-        private final String name;
-        private final String surname;
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public static Builder build() {
+        return new Builder();
+    }
+
+
+    public static class Builder {
+        private UUID id;
+        private String name;
+        private String surname;
         private int age;
-        private final String cardNumber;
-        private final String pin;
-        private final String phone;
+        private String cardNumber;
+        private String pin;
+        private String phone;
         private LocalDate birthday;
         private String gender;
+        private boolean persisted;
 
-
-        public UserBuilder(String name, String surname, String cardNumber, String pin, String phone) {
+        public Builder name(String name) {
             this.name = name;
-            this.surname = surname;
-            this.cardNumber = cardNumber;
-            this.pin = pin;
-            this.phone = phone;
+            return this;
+
         }
 
-        public UserBuilder setAge(int age) {
+        public Builder age(int age) {
             this.age = age;
             return this;
 
         }
 
-        public UserBuilder setId(int id) {
+        public Builder surname(String surname) {
+            this.surname = surname;
+            return this;
+
+        }
+
+        public Builder cardNumber(String cardNumber) {
+            this.cardNumber = cardNumber;
+            return this;
+
+        }
+
+        public Builder pin(String pin) {
+            this.pin = pin;
+            return this;
+
+        }
+
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+
+        }
+
+        public Builder persisted(boolean persisted) {
+            this.persisted = persisted;
+            return this;
+
+        }
+
+
+        public Builder id(UUID id) {
             this.id = id;
             return this;
         }
 
-        public UserBuilder setBirthday(LocalDate birthday) {
+        public Builder birthday(LocalDate birthday) {
             this.birthday = birthday;
             return this;
 
         }
 
-        public UserBuilder setGender(String gender) {
+        public Builder gender(String gender) {
             this.gender = gender;
             return this;
 
@@ -130,9 +177,8 @@ public class User implements Serializable {
         public User build() {
             return new User(this);
         }
+
     }
-
 }
-
 
 

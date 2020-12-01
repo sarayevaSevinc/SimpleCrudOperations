@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibar.demo.controllers.UserController;
 import com.ibar.demo.model.User;
-import com.ibar.demo.services.UserService;
 import com.ibar.demo.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +36,21 @@ public class UserControllerTest {
     @Test
     public void getUserTest() throws Exception {
         // set up
-        User user = new User.UserBuilder("test3", "test4", "cardnumber", "45845h", "phone")
-                .setId(5)
-                .setAge(20)
+        User user = User.build()
+                .name("test3")
+                .surname("test4")
+                .cardNumber("cardnumber")
+                .pin("45845h")
+                .phone("phone")
                 .build();
-        when(userService.getUserById(5)).thenReturn(user);
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/5").accept(MediaType.APPLICATION_JSON);
+
+        System.out.println(user.getId());
+        System.out.println(user.getName());
+        System.out.println(user.getAge());
+        when(userService.getUserById(UUID.randomUUID())).thenReturn(user);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/1").accept(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(requestBuilder).andExpect(status().isOk())
-                .andExpect(content().string("{\"id\":5,\"name\":\"test3\",\"surname\":\"test4\",\"age\":20,\"birthday\":null,\"pin\":\"pin number\",\"cardNumber\":\"cardnumber\",\"gender\":null,\"phone\":\"phone\",\"status\":null,\"createdTime\":null,\"updatedTime\":null}"))
+                .andExpect(content().string("{\"id\":1,\"name\":\"test3\",\"surname\":\"test4\",\"age\":20,\"birthday\":null,\"pin\":\"45845h\",\"cardNumber\":\"cardnumber\",\"gender\":null,\"phone\":\"phone\",\"status\":null,\"createdTime\":null,\"updatedTime\":null}"))
                 .andReturn();
 
     }
@@ -53,10 +59,14 @@ public class UserControllerTest {
     public void addUserTest() throws Exception {
         // set up
         UUID uuid = UUID.randomUUID();
-        User user = new User.UserBuilder("test3", "test4", "cardnumber", "45845h", "phone")
-                .setId(5)
-                .setAge(20)
+        User user = User.build()
+                .name("test3")
+                .surname("test4")
+                .cardNumber("cardnumber")
+                .pin("45845h")
+                .phone("phone")
                 .build();
+
         when(userService.create(any(User.class)))
                 .thenReturn(user);
 
@@ -85,10 +95,14 @@ public class UserControllerTest {
     @Test
     public void updateUserTest() throws Exception {
         // set up
-        User user = new User.UserBuilder("test3", "test4", "cardnumber", "45845h", "phone")
-                .setId(5)
-                .setAge(20)
+        User user = User.build()
+                .name("test3")
+                .surname("test4")
+                .cardNumber("cardnumber")
+                .pin("45845h")
+                .phone("phone")
                 .build();
+
         when(userService.updateUser(any(User.class)))
                 .thenReturn(user);
 

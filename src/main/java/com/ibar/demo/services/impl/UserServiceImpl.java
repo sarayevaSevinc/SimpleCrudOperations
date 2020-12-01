@@ -4,11 +4,14 @@ import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 
+@Log4j2
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,13 +26,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(UUID id) {
+        log.info("Searching user with " + id +" id....");
         return userRepository.getUserById(id).filter(user -> user.getStatus() != Status.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("there is no any user with this id"));
     }
 
     @Override
     public User getUserByName(String name) {
+        log.info("Searching user with " +name +" name....");
  return userRepository.getUserByName(name).filter(x->x.getStatus()!=(Status.DELETED))
          .orElseThrow(()->new IllegalArgumentException("there is no user with this id"));
 
@@ -37,37 +42,50 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
+
+        log.info("Updating user.. ");
+
         user.setStatus(Status.UPDATED);
-        return create(user);
+        user.setPersisted(true);
+
+        log.info("User has been updated..");
+
+        return userRepository.save(user);
     }
 
     @Override
-    public void deleteUserById(int id) {
+    public void deleteUserById(UUID id) {
+        log.info("User deleting....");
         User user = getUserById(id);
         user.setStatus(Status.DELETED);
-        create(user);
+        user.setPersisted(true);
+        log.info("user has been deleted....");
+        userRepository.save(user);
     }
 
 
     @Bean
     public void addUser() {
-        User build = new User.UserBuilder("name", "surname", "caifef", "efeof", "4854958")
+
+        User build =  User.build()
+                .id(UUID.randomUUID()).name("38437")
                 .build();
 
         create(build);
     }
 //    @Bean
 //    public void getUser(){
-//        System.out.println(getUserbyName("test7").toString());;
+//        System.out.println(getUserById(1).toString());;
 //    }
 //    @Bean
 //    public void updateUser(){
-//       User user = getUserById(1);
+//       User user = getUserById(6);
 //       user.setName("updatedUser");
+//       user.setPersisted(true);
 //        updateUser(user);
 //    }
 //    @Bean
 //    public void deleteUser(){
-//        deleteUserById(1);
+//        deleteUserById(2);
 //    }
 }
