@@ -5,11 +5,9 @@ import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 
 @Log4j2
 @Service
@@ -30,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getUserById(UUID id) {
+    public User getUserById(long id) {
         log.info("Searching user with " + id +" id....");
         return userRepository.getUserById(id).filter(user -> user.getStatus() != Status.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("there is no any user with this id"));
@@ -58,8 +56,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(UUID id) {
-        log.info("User deleting....");
+    public void deleteUserById(long id) {
+        log.info("User is deleting....");
         User user = getUserById(id);
         user.setStatus(Status.DELETED);
         user.setPersisted(true);
@@ -68,15 +66,15 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Bean
-    public void addUser() {
-
-        User build =  User.build()
-                .id(UUID.randomUUID()).name("38437")
-                .build();
-
-        create(build);
-    }
+//    @Bean
+//    public void addUser() {
+//
+//        User build =  User.build()
+//                .name("38437")
+//                .build();
+//
+//        create(build);
+//    }
 //    @Bean
 //    public void getUser(){
 //        System.out.println(getUserById(1).toString());;

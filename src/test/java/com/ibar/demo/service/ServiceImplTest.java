@@ -35,8 +35,8 @@ public class ServiceImplTest {
                 .phone("phone")
                 .build();
         UUID uuid = UUID.randomUUID();
-        Mockito.when(userRepository.getUserById(uuid)).thenReturn(Optional.of(user));
-        User userbyId = userService.getUserById(UUID.randomUUID());
+        Mockito.when(userRepository.getUserById(5)).thenReturn(Optional.of(user));
+        User userbyId = userService.getUserById(5);
         Assertions.assertEquals(userbyId, user);
     }
 

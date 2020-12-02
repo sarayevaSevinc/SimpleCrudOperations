@@ -10,13 +10,13 @@ public interface UserService  {
 
     User create(User user);
 
-    User getUserById(UUID id);
+    User getUserById(long id);
 
     User getUserByName(String name);
 
-     User updateUser(User user);
+    User updateUser(User user);
 
-   void deleteUserById(UUID id);
+   void deleteUserById(long id);
 
 
 

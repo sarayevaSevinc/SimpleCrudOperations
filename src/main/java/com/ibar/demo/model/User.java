@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -15,19 +16,19 @@ import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "IBA_USERS")
-public class User implements Serializable, Persistable<UUID> {
+public class User implements Serializable, Persistable<Long> {
 
+    @Transient
+    public static final String SEQUENCE_NAME = "users_sequence";
 
     @Id
-    @NotNull
-    private UUID id;
+    private long id;
 
     @Field("name")
     @NotNull
@@ -82,6 +83,9 @@ public class User implements Serializable, Persistable<UUID> {
     @Field("persisted")
     private boolean persisted;
 
+    @Field("profilPhoto")
+    private String profilPhotoLink;
+
     public User(Builder builder) {
         this.setName(builder.name);
         this.setSurname(builder.surname);
@@ -93,6 +97,7 @@ public class User implements Serializable, Persistable<UUID> {
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
         this.setPersisted(builder.persisted);
+        this.setProfilPhotoLink(builder.profilPhotoLink);
 
     }
 
@@ -103,7 +108,7 @@ public class User implements Serializable, Persistable<UUID> {
     }
 
     @Override
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
@@ -113,7 +118,7 @@ public class User implements Serializable, Persistable<UUID> {
 
 
     public static class Builder {
-        private UUID id;
+        private long id;
         private String name;
         private String surname;
         private int age;
@@ -123,9 +128,16 @@ public class User implements Serializable, Persistable<UUID> {
         private LocalDate birthday;
         private String gender;
         private boolean persisted;
+        private String profilPhotoLink;
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+
+        }
+
+        public Builder profilPhoto(String profilPhotoLink) {
+            this.profilPhotoLink = profilPhotoLink;
             return this;
 
         }
@@ -167,7 +179,7 @@ public class User implements Serializable, Persistable<UUID> {
         }
 
 
-        public Builder id(UUID id) {
+        public Builder id(long id) {
             this.id = id;
             return this;
         }

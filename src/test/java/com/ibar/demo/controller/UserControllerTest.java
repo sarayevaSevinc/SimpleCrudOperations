@@ -47,7 +47,7 @@ public class UserControllerTest {
         System.out.println(user.getId());
         System.out.println(user.getName());
         System.out.println(user.getAge());
-        when(userService.getUserById(UUID.randomUUID())).thenReturn(user);
+        when(userService.getUserById(5)).thenReturn(user);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/1").accept(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(requestBuilder).andExpect(status().isOk())
                 .andExpect(content().string("{\"id\":1,\"name\":\"test3\",\"surname\":\"test4\",\"age\":20,\"birthday\":null,\"pin\":\"45845h\",\"cardNumber\":\"cardnumber\",\"gender\":null,\"phone\":\"phone\",\"status\":null,\"createdTime\":null,\"updatedTime\":null}"))

@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, UUID> {
-    Optional<User> getUserById(UUID id);
+public interface UserRepository extends MongoRepository<User, Long> {
+    Optional<User> getUserById(long id);
     
     Optional<User> getUserByName(String name);
 }
