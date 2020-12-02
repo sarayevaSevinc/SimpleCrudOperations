@@ -1,5 +1,6 @@
 package com.ibar.demo.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -21,68 +22,80 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Document(collection = "IBA_USERS")
 public class User implements Serializable, Persistable<Long> {
 
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
 
+    @ApiModelProperty(notes = "user id", example = "123")
     @Id
     private long id;
 
+    @ApiModelProperty(notes = "user name", example = "Eli")
     @Field("name")
     @NotNull
     private String name;
 
-
+    @ApiModelProperty(notes = "user surname", example = "Eliyev")
     @Field("surname")
     private String surname;
 
 
+    @ApiModelProperty(notes = "user age", example = "20")
     @Field("age")
     private int age;
 
 
+    @ApiModelProperty(notes = "user birthday", example = "27-07-2000")
     @Field("birthday")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Past
     private LocalDate birthday;
 
-
+    @ApiModelProperty(notes = "user pin", example = "AZE24347855")
     @Field("pin")
     @NotNull
     private String pin;
 
-
+    @ApiModelProperty(notes = "user card number", example = "1234567891234567")
     @Field("cardNumber")
     private String cardNumber;
 
 
+    @ApiModelProperty(notes = "user gender", example = "WOMAN")
     @Field("gender")
     private String gender;
 
+    @ApiModelProperty(notes = "user phone number", example = "+994501234567")
     @Field("phone")
     private String phone;
 
+    @ApiModelProperty(notes = "user account status", example = "CREATED")
     @Field("status")
     private Status status;
 
 
+    @ApiModelProperty(notes = "account created time", example = "02-12-20200 16:57")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @CreatedDate
     @Field("createdTime")
     @PastOrPresent
     private LocalDateTime createdTime;
 
-
+    @ApiModelProperty(notes = "account created time", example = "02-12-20200 16:58")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @LastModifiedDate
     @Field("updatedTime")
     @PastOrPresent
     private LocalDateTime updatedTime;
 
+    @ApiModelProperty(notes = "is account persisted", example = "true")
     @Field("persisted")
     private boolean persisted;
 
+    @ApiModelProperty(notes = "account profile photo link", example = "google.com/frugegir38r")
     @Field("profilPhoto")
     private String profilPhotoLink;
 

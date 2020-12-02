@@ -2,7 +2,6 @@ package com.ibar.demo.services;
 
 import com.ibar.demo.model.User;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
 
 @Service
 public interface UserService  {
@@ -16,7 +15,9 @@ public interface UserService  {
 
     User updateUser(User user);
 
-   void deleteUserById(long id);
+    void deleteUserById(long id);
+
+
 
 
 

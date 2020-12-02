@@ -5,7 +5,6 @@ import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 
@@ -13,9 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-
-
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -65,29 +62,18 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    public void setProfilPicture(int id, String link){
+        User user = getUserById(id);
 
-//    @Bean
-//    public void addUser() {
-//
-//        User build =  User.build()
-//                .name("38437")
-//                .build();
-//
-//        create(build);
-//    }
-//    @Bean
-//    public void getUser(){
-//        System.out.println(getUserById(1).toString());;
-//    }
-//    @Bean
-//    public void updateUser(){
-//       User user = getUserById(6);
-//       user.setName("updatedUser");
-//       user.setPersisted(true);
-//        updateUser(user);
-//    }
-//    @Bean
-//    public void deleteUser(){
-//        deleteUserById(2);
-//    }
+        log.info("setting the profil picture ...");
+        user.setProfilPhotoLink(link);
+        log.info("profil picture has been set");
+        updateUser(user);
+    }
+
+    public String getProfilPicture(int id){
+        log.info("getting the profil picture ....");
+        return getUserById(id).getProfilPhotoLink();
+    }
+
 }
