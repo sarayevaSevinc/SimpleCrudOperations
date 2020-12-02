@@ -95,7 +95,7 @@ public class User implements Serializable, Persistable<Long> {
     @Field("persisted")
     private boolean persisted;
 
-    @ApiModelProperty(notes = "account profile photo link", example = "google.com/frugegir38r")
+    @ApiModelProperty(notes = "account profile photo link", example = "google.com/feoifegfkrnk")
     @Field("profilPhoto")
     private String profilPhotoLink;
 

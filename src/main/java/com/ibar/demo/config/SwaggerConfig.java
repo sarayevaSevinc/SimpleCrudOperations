@@ -12,7 +12,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -22,7 +21,7 @@ import static springfox.documentation.builders.PathSelectors.any;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private static final String TITLE = "ADOPTION MS REST API";
+    private static final String TITLE = "CRUD Operation API";
     private static final String VERSION = "1.0";
     private static final String AUTHORIZATION = "Authorization";
     private static final String HEADER = "header";
@@ -45,7 +44,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title(TITLE)
                 .description(TITLE)
-                .contact(new Contact("Product ms", "https://www.example.com", "sevinc.sarayeva@ibar.az"))
+                .contact(new Contact("Crud Operations ms", "https://www.example.com", "sevinc.sarayeva@ibar.az"))
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .version(VERSION)

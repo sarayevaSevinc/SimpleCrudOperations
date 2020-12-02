@@ -66,8 +66,7 @@ public class UserController {
 
         log.info("Redirecting the profil picture...");
 
-        return new RedirectView(service.getProfilPicture(id));
-    }
+        return new RedirectView(service.getProfilPicture(id)); }
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
