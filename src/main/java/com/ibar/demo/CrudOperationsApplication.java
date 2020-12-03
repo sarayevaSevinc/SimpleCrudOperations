@@ -11,8 +11,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoAuditing
 public class CrudOperationsApplication {
 
-
-
     public static void main(String[] args) {
         SpringApplication.run(CrudOperationsApplication.class, args);
 

@@ -82,14 +82,14 @@ public class User implements Serializable, Persistable<Long> {
     private Status status;
 
 
-    @ApiModelProperty(notes = "account created time", example = "02-12-20200 16:57")
+    @ApiModelProperty(notes = "account created time", example = "02-12-2020 16:57")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @CreatedDate
     @Field("createdTime")
     @PastOrPresent
     private LocalDateTime createdTime;
 
-    @ApiModelProperty(notes = "account created time", example = "02-12-20200 16:58")
+    @ApiModelProperty(notes = "account created time", example = "02-12-2020 16:58")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @LastModifiedDate
     @Field("updatedTime")
