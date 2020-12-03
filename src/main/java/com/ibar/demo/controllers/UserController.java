@@ -1,6 +1,5 @@
 package com.ibar.demo.controllers;
 
-
 import com.ibar.demo.model.StaticVariable;
 import com.ibar.demo.model.User;
 import com.ibar.demo.services.impl.UserServiceImpl;
@@ -13,7 +12,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 
@@ -38,6 +43,7 @@ public class UserController {
         return new ResponseEntity(service.getUserById(id), HttpStatus.OK);
     }
 
+
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/add")
@@ -46,6 +52,7 @@ public class UserController {
 
         return new ResponseEntity<>(service.create(user), HttpStatus.OK);
     }
+
 
     @ApiOperation(value = "user", notes = "Adding profil picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
@@ -59,6 +66,7 @@ public class UserController {
         return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
     }
 
+
     @ApiOperation(value = "redirecting the profil picture", notes = "Get user profil picture by user id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = RedirectView.class)})
     @GetMapping("/getProfilPhoto")
@@ -66,7 +74,9 @@ public class UserController {
 
         log.info("Redirecting the profil picture...");
 
-        return new RedirectView(service.getProfilPicture(id)); }
+        return new RedirectView(service.getProfilPicture(id));
+    }
+
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})

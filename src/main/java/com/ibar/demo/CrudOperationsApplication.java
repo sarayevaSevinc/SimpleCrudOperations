@@ -1,6 +1,5 @@
 package com.ibar.demo;
 
-
 import com.ibar.demo.repositories.UserRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

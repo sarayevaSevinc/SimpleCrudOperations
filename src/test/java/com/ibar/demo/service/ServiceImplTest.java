@@ -1,9 +1,10 @@
 package com.ibar.demo.service;
 
-
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.impl.UserServiceImpl;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Optional;
-import java.util.UUID;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -25,7 +24,7 @@ public class ServiceImplTest {
     UserServiceImpl userService;
 
     @Test
-     void getUserByIdTest() {
+    void getUserByIdTest() {
         // set up
         User user = User.build()
                 .name("test3")
@@ -41,7 +40,7 @@ public class ServiceImplTest {
     }
 
     @Test
-    void getUserByNameTest(){
+    void getUserByNameTest() {
         // set up
         User user = User.build()
                 .name("test3")
@@ -54,20 +53,22 @@ public class ServiceImplTest {
         User actualResult = userService.getUserByName("test3");
         Assertions.assertEquals(actualResult, user);
     }
- @Test
-    void updateUserTest(){
-     // set up
-     User user = User.build()
-             .name("test3")
-             .surname("test4")
-             .cardNumber("cardnumber")
-             .pin("45845h")
-             .phone("phone")
-             .build();
-     Mockito.when(userRepository.save(user)).thenReturn(user);
-     User actualResult = userService.updateUser(user);
-     Assertions.assertEquals(actualResult, user);
- }
+
+    @Test
+    void updateUserTest() {
+        // set up
+        User user = User.build()
+                .name("test3")
+                .surname("test4")
+                .cardNumber("cardnumber")
+                .pin("45845h")
+                .phone("phone")
+                .build();
+        Mockito.when(userRepository.save(user)).thenReturn(user);
+        User actualResult = userService.updateUser(user);
+        Assertions.assertEquals(actualResult, user);
+    }
 
 
 }
+

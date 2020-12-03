@@ -26,16 +26,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id) {
-        log.info("Searching user with " + id +" id....");
+        log.info("Searching user with " + id + " id....");
         return userRepository.getUserById(id).filter(user -> user.getStatus() != Status.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("there is no any user with this id"));
     }
 
     @Override
     public User getUserByName(String name) {
-        log.info("Searching user with " +name +" name....");
- return userRepository.getUserByName(name).filter(x->x.getStatus()!=(Status.DELETED))
-         .orElseThrow(()->new IllegalArgumentException("there is no user with this id"));
+        log.info("Searching user with " + name + " name....");
+        return userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED))
+                .orElseThrow(() -> new IllegalArgumentException("there is no user with this id"));
 
     }
 
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    public void setProfilPicture(int id, String link){
+    public void setProfilPicture(int id, String link) {
         User user = getUserById(id);
 
         log.info("setting the profil picture ...");
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
         updateUser(user);
     }
 
-    public String getProfilPicture(int id){
+    public String getProfilPicture(int id) {
         log.info("getting the profil picture ....");
         return getUserById(id).getProfilPhotoLink();
     }

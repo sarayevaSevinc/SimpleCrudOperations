@@ -4,7 +4,7 @@ import com.ibar.demo.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface UserService  {
+public interface UserService {
 
 
     User create(User user);

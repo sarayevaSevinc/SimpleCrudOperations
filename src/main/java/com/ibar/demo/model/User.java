@@ -1,22 +1,27 @@
 package com.ibar.demo.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.PastOrPresent;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -116,7 +121,9 @@ public class User implements Serializable, Persistable<Long> {
 
     @Override
     public boolean isNew() {
-        if (!persisted) this.setStatus(Status.CREATED);
+        if (!persisted) {
+            this.setStatus(Status.CREATED);
+        }
         return !persisted;
     }
 

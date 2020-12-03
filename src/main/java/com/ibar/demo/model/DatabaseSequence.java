@@ -15,5 +15,4 @@ public class DatabaseSequence {
 
     private long seq;
 
-    //getters and setters omitted
 }
