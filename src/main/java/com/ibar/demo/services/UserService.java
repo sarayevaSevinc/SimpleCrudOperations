@@ -1,5 +1,6 @@
 package com.ibar.demo.services;
 
+import com.ibar.demo.controllers.dto.UserDTO;
 import com.ibar.demo.model.User;
 import org.springframework.stereotype.Service;
 
@@ -7,13 +8,13 @@ import org.springframework.stereotype.Service;
 public interface UserService {
 
 
-    User create(User user);
+    UserDTO create(User user);
 
-    User getUserById(long id);
+    UserDTO getUserById(long id);
 
-    User getUserByName(String name);
+    UserDTO getUserByName(String name);
 
-    User updateUser(User user);
+    UserDTO updateUser(User user);
 
     void deleteUserById(long id);
 

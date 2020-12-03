@@ -1,5 +1,6 @@
 package com.ibar.demo.controllers;
 
+import com.ibar.demo.controllers.dto.UserDTO;
 import com.ibar.demo.model.StaticVariable;
 import com.ibar.demo.model.User;
 import com.ibar.demo.services.impl.UserServiceImpl;
@@ -38,7 +39,7 @@ public class UserController {
     @ApiOperation(value = "user", notes = "Get user account by id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable long id) {
+    public ResponseEntity<UserDTO> getUser(@PathVariable long id) {
         log.info("getting user with " + id + " id .....");
         return new ResponseEntity(service.getUserById(id), HttpStatus.OK);
     }
@@ -47,7 +48,7 @@ public class UserController {
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/add")
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> addUser(@RequestBody User user) {
         log.info("adding user ......");
 
         return new ResponseEntity<>(service.create(user), HttpStatus.OK);
@@ -57,7 +58,7 @@ public class UserController {
     @ApiOperation(value = "user", notes = "Adding profil picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/addProfilPhoto")
-    public ResponseEntity<User> addProfilPhoto(@RequestParam(name = "id") int id,
+    public ResponseEntity<UserDTO> addProfilPhoto(@RequestParam(name = "id") int id,
                                                @RequestParam(name = "link") String link) {
         service.setProfilPicture(id, link);
 
@@ -74,14 +75,14 @@ public class UserController {
 
         log.info("Redirecting the profil picture...");
 
-        return new RedirectView(service.getProfilPicture(id));
+        return new RedirectView(service.getProfilePicture(id));
     }
 
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> updateUser(@RequestBody User user) {
 
         log.info("updating user ......");
 
