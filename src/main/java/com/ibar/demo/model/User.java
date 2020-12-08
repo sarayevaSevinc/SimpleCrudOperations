@@ -1,11 +1,20 @@
 package com.ibar.demo.model;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -13,14 +22,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.domain.Persistable;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
@@ -28,86 +32,89 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Document(collection = "IBA_USERS")
-public class User implements Serializable, Persistable<Long> {
+@Entity
+@Table(name = "IBA_USERS")
+public class User implements Serializable {
 
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
 
-    @ApiModelProperty(notes = "user id", example = "123")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "PersonSequence")
+    @Column(name = "id")
     @Id
     private long id;
 
-    @ApiModelProperty(notes = "user name", example = "Eli")
-    @Field("name")
-    @NotNull
+
+    @Column(name = "name")
     private String name;
 
-    @ApiModelProperty(notes = "user surname", example = "Eliyev")
-    @Field("surname")
+
+    @Column(name = "surname")
     private String surname;
 
 
-    @ApiModelProperty(notes = "user age", example = "20")
-    @Field("age")
+    @Min(value = 18, message = "Age should not be less than 18")
+    @Column(name = "age")
     private int age;
 
 
-    @ApiModelProperty(notes = "user birthday", example = "27-07-2000")
-    @Field("birthday")
+
+
+    @Column(name = "birthday")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Past
     private LocalDate birthday;
 
-    @ApiModelProperty(notes = "user pin", example = "AZE24347855")
-    @Field("pin")
-    @NotNull
+
+    @Column(name = "pin")
     private String pin;
 
-    @ApiModelProperty(notes = "user card number", example = "1234567891234567")
-    @Field("cardNumber")
+
+    @Column(name = "cardNumber")
     private String cardNumber;
 
 
-    @ApiModelProperty(notes = "user gender", example = "WOMAN")
-    @Field("gender")
+
+    @Column(name = "gender")
     private String gender;
 
-    @ApiModelProperty(notes = "user phone number", example = "+994501234567")
-    @Field("phone")
-    private String phone;
 
-    @ApiModelProperty(notes = "user account status", example = "CREATED")
-    @Field("status")
+    @Column( name = "status")
     private Status status;
 
 
-    @ApiModelProperty(notes = "account created time", example = "02-12-2020 16:57")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
-    @CreatedDate
-    @Field("createdTime")
+    @CreationTimestamp
+    @Column(name = "createdTime")
     @PastOrPresent
     private LocalDateTime createdTime;
 
-    @ApiModelProperty(notes = "account created time", example = "02-12-2020 16:58")
+
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
-    @LastModifiedDate
-    @Field("updatedTime")
+    @UpdateTimestamp
+    @Column(name = "updatedTime")
     @PastOrPresent
     private LocalDateTime updatedTime;
 
-    @ApiModelProperty(notes = "is account persisted", example = "true")
-    @Field("persisted")
+
+    @Column(name = "persisted")
     private boolean persisted;
 
-    @ApiModelProperty(notes = "account profile photo link", example = "google.com/feoifegfkrnk")
-    @Field("profilPhoto")
-    private String profilPhotoLink;
+
+    @OneToMany
+    @JoinColumn(name = "phones", nullable = false)
+    private List<PhoneNumber> phones;
+
+    @PrePersist
+    void preInsert() {
+        if (this.status == null)
+            this.status = Status.CREATED;
+        this.phones = new ArrayList<>();
+    }
 
     public User(Builder builder) {
         this.setName(builder.name);
         this.setSurname(builder.surname);
-        this.setPhone(builder.phone);
         this.setCardNumber(builder.cardNumber);
         this.setPin(builder.pin);
         this.setId(builder.id);
@@ -115,21 +122,7 @@ public class User implements Serializable, Persistable<Long> {
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
         this.setPersisted(builder.persisted);
-        this.setProfilPhotoLink(builder.profilPhotoLink);
 
-    }
-
-    @Override
-    public boolean isNew() {
-        if (!persisted) {
-            this.setStatus(Status.CREATED);
-        }
-        return !persisted;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
     }
 
     public static Builder build() {
@@ -144,11 +137,9 @@ public class User implements Serializable, Persistable<Long> {
         private int age;
         private String cardNumber;
         private String pin;
-        private String phone;
         private LocalDate birthday;
         private String gender;
         private boolean persisted;
-        private String profilPhotoLink;
 
         public Builder name(String name) {
             this.name = name;
@@ -156,11 +147,6 @@ public class User implements Serializable, Persistable<Long> {
 
         }
 
-        public Builder profilPhoto(String profilPhotoLink) {
-            this.profilPhotoLink = profilPhotoLink;
-            return this;
-
-        }
 
         public Builder age(int age) {
             this.age = age;
@@ -186,11 +172,6 @@ public class User implements Serializable, Persistable<Long> {
 
         }
 
-        public Builder phone(String phone) {
-            this.phone = phone;
-            return this;
-
-        }
 
         public Builder persisted(boolean persisted) {
             this.persisted = persisted;

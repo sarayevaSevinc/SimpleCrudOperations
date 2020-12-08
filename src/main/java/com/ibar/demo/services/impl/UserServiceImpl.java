@@ -1,12 +1,21 @@
 package com.ibar.demo.services.impl;
 
+import com.ibar.demo.controllers.dto.PhoneNumberDTO;
+import com.ibar.demo.controllers.dto.UserDTO;
+import com.ibar.demo.controllers.dto.UserRequestDTO;
+import com.ibar.demo.exceptions.UserNotFoundEx;
+import com.ibar.demo.model.PhoneNumber;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
+import com.ibar.demo.utilities.ErrorMapper;
+import com.ibar.demo.utilities.UserMap;
+import com.ibar.demo.utilities.UserMapper;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -15,78 +24,101 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private PhoneNumberServiceImpl phoneService;
 
 
-    public UserServiceImpl(UserRepository userRepository) {
+
+    public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService) {
+
         this.userRepository = userRepository;
+        this.phoneService = phoneService;
+
     }
-    @Autowired
-    private MongoTemplate mongoTemplate;
+
 
     @Override
-    public User create(User user) {
-        return userRepository.save(user);
+    public UserDTO create(UserRequestDTO user) {
+        User save = userRepository.save(UserMap.INSTANCE.requestDtoToUser(user));
+        phoneService.save(PhoneNumber.builder()
+        .user(save)
+        .phone(user.getPhone())
+        .build());
+        return getUserById(save.getId());
     }
 
-    public User save(User user) {
-        return mongoTemplate.save(user);
-    }
 
     @Override
-    public User getUserById(long id) {
+    public UserDTO getUserById(long id) {
         log.info("Searching user with " + id + " id....");
-        return userRepository.getUserById(id).filter(user -> user.getStatus() != Status.DELETED)
-                .orElseThrow(() -> new IllegalArgumentException("there is no any user with this id"));
+        Optional<User> userById = userRepository.getUserById(id).filter(x -> x.getStatus() != (Status.DELETED));
+        if (userById.isPresent()) {
+            return UserMapper.addPhoneNumberToUserDto(UserMap.INSTANCE.userToUserDTO(userById.get()),
+                    phoneService.getPhoneNumberByUser(userById.get().getId()));
+        }
+        throw new UserNotFoundEx(ErrorMapper.getUserNotFoundByIdError());
     }
 
     @Override
-    public User getUserByName(String name) {
+    public UserDTO getUserByName(String name) {
         log.info("Searching user with " + name + " name....");
-        return userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED))
-                .orElseThrow(() -> new IllegalArgumentException("there is no user with this id"));
 
+        Optional<User> userByName = userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED));
+
+        if (userByName.isPresent()) {
+
+            return UserMapper.addPhoneNumberToUserDto(UserMap.INSTANCE.userToUserDTO(userByName.get()),
+                    phoneService.getPhoneNumberByUser(userByName.get().getId()));
+        }
+        throw new UserNotFoundEx(ErrorMapper.getUserNotFoundByNameError());
     }
 
     @Override
-    public User updateUser(User user) {
+    public UserDTO updateUser(User user) {
         log.info("Updating user.. ");
 
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
 
-        log.info("User has been updated.. " +  user.toString());
+        log.info("User has been updated.. " + user.getId());
 
-        return userRepository.save(user);
+        return UserMap.INSTANCE.userToUserDTO(userRepository.save(user));
+    }
+
+    public UserDTO addUserPhoneNumber(int id, String number) {
+        Optional<User> userById = userRepository.getUserById(id);
+
+        if (userById.isPresent()) {
+
+            PhoneNumber build = PhoneNumber.builder()
+                    .phone(number)
+                    .user(userById.get())
+                    .build();
+
+            log.info(build.getPhone());
+            phoneService.save(build);
+
+            List<PhoneNumberDTO> save = phoneService.getPhoneNumberByUser(userById.get().getId());
+            UserDTO userDTO = UserMap.INSTANCE.userToUserDTO(userById.get());
+            UserMapper.addPhoneNumberToUserDto(userDTO, save);
+            return userDTO;
+
+        }
+        throw new UserNotFoundEx(ErrorMapper.getUserNotFoundByIdError());
     }
 
     @Override
     public void deleteUserById(long id) {
         log.info("User is deleting....");
 
-        User user = getUserById(id);
-        user.setStatus(Status.DELETED);
-        user.setPersisted(true);
+        Optional<User> user = userRepository.getUserById(id);
+        if (user.isPresent()) {
+            user.get().setStatus(Status.DELETED);
+            user.get().setPersisted(true);
 
-        log.info("user has been deleted...."+ user.toString());
-
-        userRepository.save(user);
+            log.info("user has been deleted...." + user.get().getId());
+            userRepository.save(user.get());
+        }
     }
 
-    public void setProfilPicture(int id, String link) {
-        log.info("setting the profil picture ...");
-
-        User user = getUserById(id);
-        user.setProfilPhotoLink(link);
-
-        log.info("profil picture has been set");
-
-        updateUser(user);
-    }
-
-    public String getProfilPicture(int id) {
-        log.info("getting the profil picture ....");
-
-        return getUserById(id).getProfilPhotoLink();
-    }
 
 }
