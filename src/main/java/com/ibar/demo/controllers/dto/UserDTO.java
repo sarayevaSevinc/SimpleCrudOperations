@@ -1,5 +1,6 @@
 package com.ibar.demo.controllers.dto;
 
+import com.ibar.demo.model.PhoneNumber;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.util.List;

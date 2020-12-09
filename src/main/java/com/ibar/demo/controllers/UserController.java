@@ -100,7 +100,7 @@ public class UserController {
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserRequestDTO user) {
 
         log.info("updating user ......");
 

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -101,15 +102,15 @@ public class User implements Serializable {
     private boolean persisted;
 
 
-    @OneToMany
-    @JoinColumn(name = "phones", nullable = false)
-    private List<PhoneNumber> phones;
+//    @OneToMany
+//   //@JoinColumn(name = "phones", nullable = false)
+//    private List<PhoneNumber> phones;
 
     @PrePersist
     void preInsert() {
         if (this.status == null)
             this.status = Status.CREATED;
-        this.phones = new ArrayList<>();
+       // this.phones = new ArrayList<>();
     }
 
     public User(Builder builder) {
@@ -125,6 +126,12 @@ public class User implements Serializable {
 
     }
 
+    public List<PhoneNumber> convertStringToPhoneNumber(List<String> phones){
+     return
+       phones.stream().map(phone-> PhoneNumber.builder().user(this)
+       .phone(phone)
+       .build()).collect(Collectors.toList());
+    }
     public static Builder build() {
         return new Builder();
     }
@@ -146,7 +153,6 @@ public class User implements Serializable {
             return this;
 
         }
-
 
         public Builder age(int age) {
             this.age = age;

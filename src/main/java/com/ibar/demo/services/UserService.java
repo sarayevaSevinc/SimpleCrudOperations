@@ -16,7 +16,7 @@ public interface UserService {
 
     UserDTO getUserByName(String name);
 
-    UserDTO updateUser(User user);
+    UserDTO updateUser(UserRequestDTO user);
 
     void deleteUserById(long id);
 

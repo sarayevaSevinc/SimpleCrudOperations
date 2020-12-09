@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DateFormatter {
 
-    public LocalDate convertStringToLocalDate(String s){
+    public static LocalDate convertStringToLocalDate(String s){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
         String date = "16/08/2016";
 
