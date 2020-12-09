@@ -1,5 +1,8 @@
 package com.ibar.demo.model;
 
+import com.ibar.demo.annotation.BirthdayConstraint;
+import com.ibar.demo.annotation.NameConstraint;
+import com.ibar.demo.annotation.PinConstraint;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,11 +48,11 @@ public class User implements Serializable {
     @Id
     private long id;
 
-
+    @NameConstraint
     @Column(name = "name")
     private String name;
 
-
+    @NameConstraint
     @Column(name = "surname")
     private String surname;
 
@@ -67,6 +70,7 @@ public class User implements Serializable {
     private LocalDate birthday;
 
 
+    @PinConstraint
     @Column(name = "pin")
     private String pin;
 
