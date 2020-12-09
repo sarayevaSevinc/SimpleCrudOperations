@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     runtimeOnly 'mysql:mysql-connector-java'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '7.0.0.CR1'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-web'

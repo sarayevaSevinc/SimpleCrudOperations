@@ -26,7 +26,7 @@ public class UserDTO {
     @ApiModelProperty(notes = "user age", example = "20")
     private int age;
 
-    @ApiModelProperty(notes = "user's phone numbers list", example = "[ { +994774081550 } ] ")
+    @ApiModelProperty(notes = "user's phone numbers list", example = "[ { +994778785641 } ] ")
     private List<PhoneNumberDTO> phoneNumbers;
 
     @ApiModelProperty(notes = "user birthday", example = "27-07-2000")

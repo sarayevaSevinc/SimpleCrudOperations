@@ -1,5 +1,6 @@
 package com.ibar.demo.model;
 
+import com.ibar.demo.annotation.PhoneNumberConstraint;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +36,7 @@ public class PhoneNumber implements Serializable {
     @JoinColumn(name = "userId")
     private User user;
 
-
+    @PhoneNumberConstraint
     @Column(name = "phone")
     private String phone;
 

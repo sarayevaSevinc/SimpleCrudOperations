@@ -1,6 +1,8 @@
 package com.ibar.demo.controllers.dto;
 
+import com.ibar.demo.annotation.PhoneNumberConstraint;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.Valid;
 import javax.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,8 +36,9 @@ public class UserRequestDTO {
     @ApiModelProperty(notes = "user's card Number", example = "124354546")
     private String cardNumber;
 
-    @ApiModelProperty(notes = "user's phone number", example = "+994774081550")
-    private String phone;
+
+    @ApiModelProperty(notes = "user's phone number", example = "+99477357458")
+    @Valid private String phone;
 
     @ApiModelProperty(notes = "user's gender", example = "W")
     private String gender;
