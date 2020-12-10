@@ -1,6 +1,6 @@
 package com.ibar.demo.controllers;
 
-import com.ibar.demo.controllers.dto.UserDTO;
+import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.model.Photo;
 import com.ibar.demo.model.StaticVariable;
@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +50,8 @@ public class UserController {
     @ApiOperation(value = "user", notes = "Get user account by id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @GetMapping("/{lang}/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String lang,
-                                           @PathVariable long id) {
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable String lang,
+                                                   @PathVariable long id) {
         LanguageMapper.chooseLang(lang);
         log.info("getting user with " + id + " id .....");
         return new ResponseEntity(service.getUserById(id), HttpStatus.OK);
@@ -60,8 +61,8 @@ public class UserController {
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("{lang}/add")
-    public ResponseEntity<UserDTO> addUser(@RequestBody UserRequestDTO user,
-                                           @PathVariable String lang) {
+    public ResponseEntity<UserResponseDTO> addUser(@RequestBody UserRequestDTO user,
+                                                   @PathVariable String lang) {
         log.info("adding user ......");
 
         LanguageMapper.chooseLang(lang);
@@ -70,37 +71,35 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "Adding profil picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = String.class)})
-    @PostMapping("/addProfilePhoto/{lang}")
+    @PostMapping("/addProfilePhoto/{lang}/{id}")
     public ObjectId addPhoto(@PathVariable String lang,
+                           @PathVariable int id,
                            @RequestPart String title,
                            @RequestPart MultipartFile file)
             throws IOException {
         log.info(title);
         log.info(file);
         LanguageMapper.chooseLang(lang);
-        ObjectId id = photoService.addPhoto(title, file);
-        return  id;
+        ObjectId objectid = photoService.addPhoto(title, file, id);
+        return  objectid;
     }
 
     @ApiOperation(value = "getting the profile picture", notes = "Get user profile picture by user id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = Photo.class)})
     @GetMapping("/getProfilePhoto/{lang}/{id}")
-    public Photo getPhoto(@PathVariable ObjectId id,
-                          @PathVariable String lang) throws IOException {
+    public byte[] getPhoto(@PathVariable ObjectId id,
+                           @PathVariable String lang) throws IOException {
 
         Photo photo = photoService.getPhoto(id);
         LanguageMapper.chooseLang(lang);
-//        model.addAttribute("title", photo.getTitle());
-//        model.addAttribute("image",
-//                Base64.getEncoder().encodeToString(photo.getImage().getData()));
-        return photo;
+        return photo.getData();
     }
 
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserRequestDTO user) {
+    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody UserRequestDTO user) {
 
         log.info("updating user ......");
 
@@ -110,8 +109,8 @@ public class UserController {
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/addPhoneNumber")
-    public ResponseEntity<UserDTO> addUserPhoneNumber(@RequestParam int id,
-                                                      @RequestParam String number) {
+    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@RequestParam int id,
+                                                              @RequestParam String number) {
 
         log.info("updating user ......");
 

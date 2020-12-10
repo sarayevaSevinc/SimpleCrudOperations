@@ -24,9 +24,12 @@ public class Photo {
     @Id
     private ObjectId id;
 
-    @Field
+    @Field (name = "userId")
+    private int userId;
+
+    @Field(name = "title")
     private String title;
 
-    @Field
-    private Binary image;
+    @Field(name = "image")
+    private byte[] data;
 }

@@ -17,6 +17,8 @@ public class PhotoDTO {
     @ApiModelProperty(notes = "photo title", example = "test title")
     String title;
 
+    int userid;
+
     @ApiModelProperty(notes = "photo file")
     MultipartFile file;
 }

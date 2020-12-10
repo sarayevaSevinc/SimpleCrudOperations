@@ -1,21 +1,16 @@
 package com.ibar.demo.model;
 
-import com.ibar.demo.annotation.BirthdayConstraint;
+import com.ibar.demo.annotation.GenderConstraint;
 import com.ibar.demo.annotation.NameConstraint;
 import com.ibar.demo.annotation.PinConstraint;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -83,7 +78,7 @@ public class User implements Serializable {
     @Column(name = "gender")
     private String gender;
 
-
+    @GenderConstraint
     @Column( name = "status")
     private Status status;
 
@@ -106,15 +101,10 @@ public class User implements Serializable {
     private boolean persisted;
 
 
-//    @OneToMany
-//   //@JoinColumn(name = "phones", nullable = false)
-//    private List<PhoneNumber> phones;
-
     @PrePersist
     void preInsert() {
         if (this.status == null)
             this.status = Status.CREATED;
-       // this.phones = new ArrayList<>();
     }
 
     public User(Builder builder) {
@@ -130,12 +120,6 @@ public class User implements Serializable {
 
     }
 
-    public List<PhoneNumber> convertStringToPhoneNumber(List<String> phones){
-     return
-       phones.stream().map(phone-> PhoneNumber.builder().user(this)
-       .phone(phone)
-       .build()).collect(Collectors.toList());
-    }
     public static Builder build() {
         return new Builder();
     }

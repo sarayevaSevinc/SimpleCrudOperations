@@ -43,4 +43,6 @@ public class UserRequestDTO {
     @ApiModelProperty(notes = "user's gender", example = "W")
     private String gender;
 
+
+
 }

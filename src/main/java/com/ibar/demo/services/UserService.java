@@ -1,6 +1,6 @@
 package com.ibar.demo.services;
 
-import com.ibar.demo.controllers.dto.UserDTO;
+import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import org.springframework.stereotype.Service;
 
@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 public interface UserService {
 
 
-    UserDTO create(UserRequestDTO user);
+    UserResponseDTO create(UserRequestDTO user);
 
-    UserDTO getUserById(long id);
+    UserResponseDTO getUserById(long id);
 
-    UserDTO getUserByName(String name);
+    UserResponseDTO getUserByName(String name);
 
-    UserDTO updateUser(UserRequestDTO user);
+    UserResponseDTO updateUser(UserRequestDTO user);
 
     void deleteUserById(long id);
 

@@ -10,8 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface PhotoService {
 
-    ObjectId addPhoto(String title, MultipartFile image) throws IOException;
+    ObjectId addPhoto(String title, MultipartFile image, int userid) throws IOException;
     Photo getPhoto(ObjectId id) throws IOException;
+
+    Photo getPhotoByUserId(int id);
 
 
 }

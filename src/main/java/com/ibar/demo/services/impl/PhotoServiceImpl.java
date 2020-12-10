@@ -9,6 +9,7 @@ import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class PhotoServiceImpl  implements PhotoService {
@@ -21,19 +22,14 @@ public class PhotoServiceImpl  implements PhotoService {
     }
 
     @Override
-    public ObjectId addPhoto(String title, MultipartFile image) throws IOException {
+    public ObjectId addPhoto(String title, MultipartFile image, int userid) throws IOException {
         Photo photo = Photo.builder()
                 .title(title)
+                .userId(userid)
                 .build();
-        photo.setImage(new Binary(BsonBinarySubType.BINARY, image.getBytes()));
+        photo.setData( image.getBytes());
 
         return this.photoRepository.save(photo).getId();
-//        DBObject metaData = new BasicDBObject();
-//        metaData.put("type", "video");
-//        metaData.put("title", title);
-//        ObjectId id = gridFsTemplate.store(
-//                image.getInputStream(), image.getName(), image.getContentType(), metaData);
-//        return id.toString();
     }
 
     @Override
@@ -41,6 +37,13 @@ public class PhotoServiceImpl  implements PhotoService {
        // photoRepository.findByID(id);
             return photoRepository.findById(id).get();
         }
+
+    @Override
+    public Photo getPhotoByUserId(int id) {
+        return photoRepository.findByUserId(id).get();
     }
+
+
+}
 
 

@@ -1,12 +1,14 @@
 package com.ibar.demo.services.impl;
 
-import com.ibar.demo.controllers.dto.UserDTO;
+import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.model.PhoneNumber;
+import com.ibar.demo.model.Photo;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhoneNumberRepository;
+import com.ibar.demo.repositories.PhotoRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.ErrorMapper;
@@ -24,21 +26,24 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PhoneNumberServiceImpl phoneService;
     private PhoneNumberRepository phoneRepository;
+    private PhotoRepository photoRepository;
 
 
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
-    PhoneNumberRepository repository) {
+                           PhoneNumberRepository repository, PhotoRepository photoRepository) {
 
         this.userRepository = userRepository;
         this.phoneService = phoneService;
         this.phoneRepository = repository;
+        this.phoneRepository = phoneRepository;
+
 
     }
 
 
     @Override
-    public UserDTO create(UserRequestDTO user) {
+    public UserResponseDTO create(UserRequestDTO user) {
 
         User save = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
 
@@ -56,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDTO getUserById(long id) {
+    public UserResponseDTO getUserById(long id) {
         log.info("Searching user with " + id + " id....");
         Optional<User> userById = userRepository.getUserById(id).filter(x -> x.getStatus() != (Status.DELETED));
         if (userById.isPresent()) {
@@ -68,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserByName(String name) {
+    public UserResponseDTO getUserByName(String name) {
         log.info("Searching user with " + name + " name....");
 
         Optional<User> userByName = userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED));
@@ -81,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO) {
         log.info("Updating user.. ");
 
         User user  = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
@@ -102,7 +107,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.INSTANCE.mapUsertoUserDTO(save, byUserId);
     }
 
-    public UserDTO addUserPhoneNumber(int id, String number) {
+    public UserResponseDTO addUserPhoneNumber(int id, String number) {
         Optional<User> userById = userRepository.getUserById(id);
 
         if (userById.isPresent()) {
@@ -116,9 +121,9 @@ public class UserServiceImpl implements UserService {
             phoneService.save(build);
 
             List<PhoneNumber> phones = phoneRepository.findByUserId(userById.get().getId());
-            UserDTO userDTO = UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phones);
+            UserResponseDTO userResponseDTO = UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phones);
 
-            return userDTO;
+            return userResponseDTO;
 
         }
         throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
