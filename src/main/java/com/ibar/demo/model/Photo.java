@@ -25,7 +25,7 @@ public class Photo {
     private ObjectId id;
 
     @Field (name = "userId")
-    private int userId;
+    private long userId;
 
     @Field(name = "title")
     private String title;

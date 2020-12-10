@@ -30,6 +30,7 @@ public interface UserMapper {
                 .cardNumber(userRequestDTO.getCardNumber())
                 .pin(userRequestDTO.getPin())
                 .gender(userRequestDTO.getGender())
+                 .profilePictureUrl("There is no profil picture for this user.")
                 .build();
     }
 
@@ -56,6 +57,28 @@ public interface UserMapper {
                 .age(user.getAge())
                 .birthday(user.getBirthday())
                 .phoneNumbers(collect)
+               .profileImage(user.getProfilePictureUrl())
+                .build();
+
+
+    }
+
+    default UserResponseDTO mapUserWithProfilePicturetoUserDTO(User user, List<PhoneNumber> phoneNumbers, String url){
+        if(user == null)
+            return null;
+        List<PhoneNumberDTO> collect = new ArrayList<>();
+        if(phoneNumbers != null && !phoneNumbers.isEmpty()) {
+            collect = phoneNumbers.stream().map(phone -> PhoneNumberDTO.builder()
+                    .phone(phone.getPhone())
+                    .build()).collect(Collectors.toList());
+        }
+        return UserResponseDTO.builder()
+                .name(user.getName())
+                .surname(user.getSurname())
+                .age(user.getAge())
+                .birthday(user.getBirthday())
+                .phoneNumbers(collect)
+                .profileImage(url)
                 .build();
 
 

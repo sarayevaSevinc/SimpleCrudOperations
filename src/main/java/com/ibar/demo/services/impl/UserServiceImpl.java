@@ -4,12 +4,12 @@ import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.model.PhoneNumber;
-import com.ibar.demo.model.Photo;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhoneNumberRepository;
 import com.ibar.demo.repositories.PhotoRepository;
 import com.ibar.demo.repositories.UserRepository;
+import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.ErrorMapper;
 import com.ibar.demo.utilities.UserMapper;
@@ -27,16 +27,18 @@ public class UserServiceImpl implements UserService {
     private PhoneNumberServiceImpl phoneService;
     private PhoneNumberRepository phoneRepository;
     private PhotoRepository photoRepository;
+    private PhotoServiceImpl photoService;
 
 
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
-                           PhoneNumberRepository repository, PhotoRepository photoRepository) {
+                           PhoneNumberRepository repository, PhotoRepository photoRepository, PhotoServiceImpl photoService) {
 
         this.userRepository = userRepository;
         this.phoneService = phoneService;
         this.phoneRepository = repository;
-        this.phoneRepository = phoneRepository;
+        this.photoRepository = photoRepository;
+        this.photoService = photoService;
 
 
     }
@@ -44,14 +46,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO create(UserRequestDTO user) {
-
         User save = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
 
-
-        phoneRepository.save(PhoneNumber.builder()
-                .user(save)
-                .phone(user.getPhone())
-                .build());
+        phoneService.save(phoneService.createPhoneNumber(user.getPhone(), save));
 
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(save.getId());
 
@@ -86,10 +83,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO) {
+    public User updateUser(User user) {
         log.info("Updating user.. ");
 
-        User user  = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
 
@@ -97,14 +93,17 @@ public class UserServiceImpl implements UserService {
 
         User save = userRepository.save(user);
 
-        phoneRepository.save(PhoneNumber.builder()
-                .user(save)
-                .phone(userRequestDTO.getPhone())
-                .build());
+        return save;
+    }
 
-        List<PhoneNumber> byUserId = phoneRepository.findByUserId(save.getId());
+    public UserResponseDTO updateUserByRequestDTO(UserRequestDTO userRequestDTO) {
+        log.info("Updating user.. ");
 
-        return UserMapper.INSTANCE.mapUsertoUserDTO(save, byUserId);
+        User user  = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
+
+        List<PhoneNumber> byUserId = phoneRepository.findByUserId(user.getId());
+
+        return UserMapper.INSTANCE.mapUsertoUserDTO(updateUser(user), byUserId);
     }
 
     public UserResponseDTO addUserPhoneNumber(int id, String number) {

@@ -3,9 +3,9 @@ package com.ibar.demo.annotation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class PinValidator   implements ConstraintValidator<PinConstraint, String> {
+public class CardNumberValidator implements ConstraintValidator<CardNumberConstraint, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value.length()==7 && value.matches("[A-Za-z0-9]+");
+        return value.length()==16 && value.matches("[0-9]+");
     }
 }

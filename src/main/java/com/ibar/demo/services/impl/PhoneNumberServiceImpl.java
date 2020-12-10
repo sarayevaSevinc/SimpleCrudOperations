@@ -4,6 +4,7 @@ import com.ibar.demo.controllers.dto.PhoneNumberDTO;
 import com.ibar.demo.exceptions.PhoneNumberWithIdNotFound;
 import com.ibar.demo.model.PhoneNumber;
 import com.ibar.demo.model.StaticVariable;
+import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhoneNumberRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.PhoneNumberService;
@@ -32,6 +33,12 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
     public PhoneNumberDTO save(PhoneNumber phoneNumber) {
         return PhoneNumberMapper.
                 mapPhoneNumberToPhoneNumberDto(phoneNumberRepository.save(phoneNumber));
+    }
+    public PhoneNumber createPhoneNumber(String phoneNumber, User save){
+      return   phoneNumberRepository.save(PhoneNumber.builder()
+                .user(save)
+                .phone(phoneNumber)
+                .build());
     }
 
     @Override

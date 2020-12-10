@@ -17,6 +17,7 @@ import java.io.IOException;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -84,6 +85,16 @@ public class UserController {
         return  objectid;
     }
 
+    @GetMapping("/images/{lang}/{id}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String lang,
+                                          @PathVariable ObjectId id) throws IOException {
+        Photo photo = photoService.getPhoto(id);
+        LanguageMapper.chooseLang(lang);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + photo.getTitle() + "\"")
+                .body(photo.getData());
+    }
+
     @ApiOperation(value = "getting the profile picture", notes = "Get user profile picture by user id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = Photo.class)})
     @GetMapping("/getProfilePhoto/{lang}/{id}")
@@ -103,14 +114,17 @@ public class UserController {
 
         log.info("updating user ......");
 
-        return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(service.updateUserByRequestDTO(user), HttpStatus.OK);
     }
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/addPhoneNumber")
-    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@RequestParam int id,
+    @PostMapping("/addPhoneNumber/{lang}")
+    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@PathVariable String lang,
+                                                              @RequestParam int id,
                                                               @RequestParam String number) {
+
+        LanguageMapper.chooseLang(lang);
 
         log.info("updating user ......");
 

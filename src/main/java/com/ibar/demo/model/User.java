@@ -1,5 +1,6 @@
 package com.ibar.demo.model;
 
+import com.ibar.demo.annotation.CardNumberConstraint;
 import com.ibar.demo.annotation.GenderConstraint;
 import com.ibar.demo.annotation.NameConstraint;
 import com.ibar.demo.annotation.PinConstraint;
@@ -56,7 +57,8 @@ public class User implements Serializable {
     @Column(name = "age")
     private int age;
 
-
+    @Column(name = "profilePicture")
+    private String profilePictureUrl;
 
 
     @Column(name = "birthday")
@@ -69,16 +71,17 @@ public class User implements Serializable {
     @Column(name = "pin")
     private String pin;
 
-
+    
+    @CardNumberConstraint
     @Column(name = "cardNumber")
     private String cardNumber;
 
 
-
+    @GenderConstraint
     @Column(name = "gender")
     private String gender;
 
-    @GenderConstraint
+
     @Column( name = "status")
     private Status status;
 
@@ -117,6 +120,7 @@ public class User implements Serializable {
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
         this.setPersisted(builder.persisted);
+        this.setProfilePictureUrl(builder.profilePictureUrl);
 
     }
 
@@ -135,13 +139,18 @@ public class User implements Serializable {
         private LocalDate birthday;
         private String gender;
         private boolean persisted;
+        private String profilePictureUrl;
 
         public Builder name(String name) {
             this.name = name;
             return this;
 
         }
+        public Builder profilePictureUrl(String profilePictureUrl) {
+            this.profilePictureUrl = profilePictureUrl;
+            return this;
 
+        }
         public Builder age(int age) {
             this.age = age;
             return this;

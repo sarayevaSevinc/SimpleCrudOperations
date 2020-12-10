@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 
 public interface PhotoRepository extends MongoRepository<Photo, ObjectId> {
-   Optional<Photo> findByUserId(int id);
+   Optional<Photo> findByUserId(long id);
 }
