@@ -3,9 +3,9 @@ package com.ibar.demo.utilities;
 import com.ibar.demo.model.StaticVariable;
 
 public class ErrorMapper {
-    public static String getUserNotFoundByIdError(){
+    public static String getUserNotFoundByIdError() {
         switch (StaticVariable.lang) {
-            case "az" :
+            case "az":
                 return StaticVariable.az_USER_NOT_FOUND_WITH_ID;
             case "en":
                 return StaticVariable.en_USER_NOT_FOUND_WITH_ID;
@@ -15,9 +15,9 @@ public class ErrorMapper {
         return StaticVariable.en_USER_NOT_FOUND_WITH_ID;
     }
 
-    public static String getPhoneNumberNotFoundWithIDError(){
+    public static String getPhoneNumberNotFoundWithIDError() {
         switch (StaticVariable.lang) {
-            case "az" :
+            case "az":
                 return StaticVariable.az_PHONE_NOT_FOUND_WITH_ID;
             case "en":
                 return StaticVariable.en_PHONE_NOT_FOUND_WITH_ID;
@@ -27,9 +27,9 @@ public class ErrorMapper {
         return StaticVariable.en_PHONE_NOT_FOUND_WITH_ID;
     }
 
-    public static String getUserNotFoundByNameError(){
+    public static String getUserNotFoundByNameError() {
         switch (StaticVariable.lang) {
-            case "az" :
+            case "az":
                 return StaticVariable.az_USER_NOT_FOUND_WITH_NAME;
             case "en":
                 return StaticVariable.en_USER_NOT_FOUND_WITH_NAME;
@@ -39,9 +39,9 @@ public class ErrorMapper {
         return StaticVariable.en_USER_NOT_FOUND_WITH_NAME;
     }
 
-    public static String getProfilePhotoNotFoundByIdError(){
+    public static String getProfilePhotoNotFoundByIdError() {
         switch (StaticVariable.lang) {
-            case "az" :
+            case "az":
                 return StaticVariable.az_PHOTO_NOT_FOUND_WITH_ID;
             case "en":
                 return StaticVariable.en_PHOTO_NOT_FOUND_WITH_ID;

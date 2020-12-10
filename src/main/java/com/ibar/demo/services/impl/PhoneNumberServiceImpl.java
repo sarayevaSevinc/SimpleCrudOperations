@@ -8,7 +8,7 @@ import com.ibar.demo.repositories.PhoneNumberRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.PhoneNumberService;
 import com.ibar.demo.utilities.ErrorMapper;
-import com.ibar.demo.utilities.PhoneNumberMapper;
+import com.ibar.demo.utilities.PhoneNumberMapp;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
@@ -29,8 +29,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
 
     @Override
     public PhoneNumberDTO save(PhoneNumber phoneNumber) {
-        return PhoneNumberMapper.
-                mapPhoneNumberToPhoneNumberDto(phoneNumberRepository.save(phoneNumber));
+        return PhoneNumberMapp.INSTANCE.phoneNumberToPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
     }
 
     public PhoneNumber createPhoneNumber(String phoneNumber, User save) {
@@ -44,7 +43,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
     public PhoneNumberDTO getPhoneNumberById(int id) {
         Optional<PhoneNumber> byId = phoneNumberRepository.findById(id);
         if (byId.isPresent()) {
-            return PhoneNumberMapper.mapPhoneNumberToPhoneNumberDto(byId.get());
+            return PhoneNumberMapp.INSTANCE.phoneNumberToPhoneNumberDTO(byId.get());
         }
         throw new PhoneNumberWithIdNotFound(ErrorMapper.getPhoneNumberNotFoundWithIDError());
     }
@@ -53,7 +52,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
     public List<PhoneNumberDTO> getPhoneNumberByUser(long userid) {
         List<PhoneNumber> byUserId = phoneNumberRepository.findByUserId(userid);
         if (!byUserId.isEmpty()) {
-            return PhoneNumberMapper.mapPhoneNumbersToPhoneNumberDto(byUserId);
+            return PhoneNumberMapp.INSTANCE.mapPhoneNumbersToPhoneNumberDto(byUserId);
         }
         throw new PhoneNumberWithIdNotFound(ErrorMapper.getPhoneNumberNotFoundWithIDError());
     }

@@ -1,5 +1,6 @@
 package com.ibar.demo.services.impl;
 
+import com.ibar.demo.controllers.dto.PhoneNumberDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
@@ -100,13 +101,13 @@ public class UserServiceImpl implements UserService {
         return UserMapper.INSTANCE.mapUsertoUserDTO(updateUser(user), byUserId);
     }
 
-    public UserResponseDTO addUserPhoneNumber(int id, String number) {
+    public UserResponseDTO addUserPhoneNumber(int id, PhoneNumberDTO number) {
         Optional<User> userById = userRepository.getUserById(id);
 
         if (userById.isPresent()) {
 
             PhoneNumber build = PhoneNumber.builder()
-                    .phone(number)
+                    .phone(number.getPhone())
                     .user(userById.get())
                     .build();
 

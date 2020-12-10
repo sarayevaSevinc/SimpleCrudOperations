@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 @RestController
@@ -24,6 +25,7 @@ public class ExceptionHandler {
                 .description(ErrorMapper.getUserNotFoundByIdError())
                 .build();
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(DateTimeParseException.class)
     public ExceptionEntity handleDateTimeParseException() {
         return ExceptionEntity.builder()
@@ -39,11 +41,12 @@ public class ExceptionHandler {
                 .description(ErrorMapper.getPhoneNumberNotFoundWithIDError())
                 .build();
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(ConstraintViolationException.class)
-    public ExceptionEntity exception() {
+    public ExceptionEntity exception(ConstraintViolationException ex, WebRequest request) {
         return ExceptionEntity.builder()
                 .code(404)
-                .description("Please, enter valid informations.")
+                .description(ex.getConstraintViolations().stream().findAny().get().getMessage())
                 .build();
     }
 

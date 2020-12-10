@@ -71,7 +71,7 @@ public class User implements Serializable {
     @Column(name = "pin")
     private String pin;
 
-    
+
     @CardNumberConstraint
     @Column(name = "cardNumber")
     private String cardNumber;
@@ -82,7 +82,7 @@ public class User implements Serializable {
     private String gender;
 
 
-    @Column( name = "status")
+    @Column(name = "status")
     private Status status;
 
 
@@ -104,12 +104,6 @@ public class User implements Serializable {
     private boolean persisted;
 
 
-    @PrePersist
-    void preInsert() {
-        if (this.status == null)
-            this.status = Status.CREATED;
-    }
-
     public User(Builder builder) {
         this.setName(builder.name);
         this.setSurname(builder.surname);
@@ -128,6 +122,12 @@ public class User implements Serializable {
         return new Builder();
     }
 
+    @PrePersist
+    void preInsert() {
+        if (this.status == null) {
+            this.status = Status.CREATED;
+        }
+    }
 
     public static class Builder {
         private long id;
@@ -146,11 +146,13 @@ public class User implements Serializable {
             return this;
 
         }
+
         public Builder profilePictureUrl(String profilePictureUrl) {
             this.profilePictureUrl = profilePictureUrl;
             return this;
 
         }
+
         public Builder age(int age) {
             this.age = age;
             return this;

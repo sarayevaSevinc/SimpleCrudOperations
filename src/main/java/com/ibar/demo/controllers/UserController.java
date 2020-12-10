@@ -1,7 +1,9 @@
 package com.ibar.demo.controllers;
 
+import com.ibar.demo.controllers.dto.PhoneNumberDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
+import com.ibar.demo.model.PhoneNumber;
 import com.ibar.demo.model.Photo;
 import com.ibar.demo.model.StaticVariable;
 import com.ibar.demo.model.User;
@@ -13,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
+import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpHeaders;
@@ -59,7 +62,7 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/add/{lang}")
+    @PostMapping("/{lang}/add")
     public ResponseEntity<UserResponseDTO> addUser(@RequestBody UserRequestDTO user,
                                                    @PathVariable String lang) {
         log.info("adding user ......");
@@ -70,7 +73,7 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "Adding profil picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = String.class)})
-    @PostMapping("/addProfilePhoto/{lang}/{id}")
+    @PostMapping("/{lang}/addProfilePhoto/{id}")
     public ResponseEntity<UserResponseDTO> addPhoto(@PathVariable String lang,
                                                     @PathVariable int id,
                                                     @RequestPart String title,
@@ -83,7 +86,9 @@ public class UserController {
         return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/images/{lang}/{id}")
+    @ApiOperation(value = "image", notes = "getting image")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = byte.class)})
+    @GetMapping("/{lang}/images/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String lang,
                                           @PathVariable ObjectId id) throws IOException {
         LanguageMapper.chooseLang(lang);
@@ -95,7 +100,7 @@ public class UserController {
 
     @ApiOperation(value = "getting the profile picture", notes = "Get user profile picture by user id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = Photo.class)})
-    @GetMapping("/getProfilePhoto/{lang}/{id}")
+    @GetMapping("/{lang}/getProfilePhoto/{id}")
     public byte[] getPhoto(@PathVariable ObjectId id,
                            @PathVariable String lang) throws IOException {
 
@@ -107,9 +112,11 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/update")
-    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody UserRequestDTO user) {
+    @PostMapping("/{lang}/update")
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String lang,
+                                                      @RequestBody UserRequestDTO user) {
 
+        LanguageMapper.chooseLang(lang);
         log.info("updating user ......");
 
         return new ResponseEntity<>(service.updateUserByRequestDTO(user), HttpStatus.OK);
@@ -117,10 +124,10 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/addPhoneNumber/{lang}")
+    @PostMapping("/{lang}/addPhoneNumber")
     public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@PathVariable String lang,
                                                               @RequestParam int id,
-                                                              @RequestParam String number) {
+                                                              @RequestBody PhoneNumberDTO number) {
 
         LanguageMapper.chooseLang(lang);
 
