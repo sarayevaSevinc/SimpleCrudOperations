@@ -38,4 +38,16 @@ public class ErrorMapper {
         }
         return StaticVariable.en_USER_NOT_FOUND_WITH_NAME;
     }
+
+    public static String getProfilePhotoNotFoundByIdError(){
+        switch (StaticVariable.lang) {
+            case "az" :
+                return StaticVariable.az_PHOTO_NOT_FOUND_WITH_ID;
+            case "en":
+                return StaticVariable.en_PHOTO_NOT_FOUND_WITH_ID;
+            case "ru":
+                return StaticVariable.ru_PHOTO_NOT_FOUND_WITH_ID;
+        }
+        return StaticVariable.en_PHOTO_NOT_FOUND_WITH_ID;
+    }
 }

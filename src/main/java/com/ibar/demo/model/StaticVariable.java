@@ -16,4 +16,8 @@ public final class StaticVariable {
     public static final String az_USER_NOT_FOUND_WITH_NAME = "Bu adla bir istifadechi tapilmadi!";
     public static final String en_USER_NOT_FOUND_WITH_NAME = "There is no any user with this name!";
     public static final String ru_USER_NOT_FOUND_WITH_NAME= "Нет пользователей с таким именем";
+
+    public static final String az_PHOTO_NOT_FOUND_WITH_ID = "Bu id-ile bir profil shekli tapilmadi";
+    public static final String en_PHOTO_NOT_FOUND_WITH_ID = "There is no any profile photo with this id!";
+    public static final String ru_PHOTO_NOT_FOUND_WITH_ID= "Нет фото профиля с этим идентификатором!";
 }

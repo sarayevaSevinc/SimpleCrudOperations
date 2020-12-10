@@ -3,6 +3,7 @@ package com.ibar.demo.controllers;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.exceptions.ExceptionEntity;
 import com.ibar.demo.exceptions.PhoneNumberWithIdNotFound;
+import com.ibar.demo.exceptions.PhotoNotFound;
 import com.ibar.demo.utilities.ErrorMapper;
 import java.time.format.DateTimeParseException;
 import javax.validation.ConstraintViolationException;
@@ -46,4 +47,11 @@ public class ExceptionHandler {
                 .build();
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(PhotoNotFound.class)
+    public ExceptionEntity PhotoNotFoundexception() {
+        return ExceptionEntity.builder()
+                .code(404)
+                .description(ErrorMapper.getProfilePhotoNotFoundByIdError())
+                .build();
+    }
 }

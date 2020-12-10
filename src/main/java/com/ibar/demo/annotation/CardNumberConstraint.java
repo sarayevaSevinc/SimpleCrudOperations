@@ -13,7 +13,7 @@ import javax.validation.Payload;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CardNumberConstraint {
-    String message() default "Invalid user pin";
+    String message() default "Invalid cardNumber";
 
     Class<?>[] groups() default {};
 

@@ -1,13 +1,12 @@
 package com.ibar.demo.controllers;
 
-import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
+import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.model.Photo;
 import com.ibar.demo.model.StaticVariable;
 import com.ibar.demo.model.User;
 import com.ibar.demo.services.impl.PhotoServiceImpl;
 import com.ibar.demo.services.impl.UserServiceImpl;
-
 import com.ibar.demo.utilities.LanguageMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +14,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import lombok.extern.log4j.Log4j2;
-import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -61,7 +59,7 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("{lang}/add")
+    @PostMapping("/add/{lang}")
     public ResponseEntity<UserResponseDTO> addUser(@RequestBody UserRequestDTO user,
                                                    @PathVariable String lang) {
         log.info("adding user ......");
@@ -73,23 +71,23 @@ public class UserController {
     @ApiOperation(value = "user", notes = "Adding profil picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = String.class)})
     @PostMapping("/addProfilePhoto/{lang}/{id}")
-    public ObjectId addPhoto(@PathVariable String lang,
-                           @PathVariable int id,
-                           @RequestPart String title,
-                           @RequestPart MultipartFile file)
+    public ResponseEntity<UserResponseDTO> addPhoto(@PathVariable String lang,
+                                                    @PathVariable int id,
+                                                    @RequestPart String title,
+                                                    @RequestPart MultipartFile file)
             throws IOException {
         log.info(title);
         log.info(file);
         LanguageMapper.chooseLang(lang);
-        ObjectId objectid = photoService.addPhoto(title, file, id);
-        return  objectid;
+        photoService.addPhoto(title, file, id);
+        return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
     }
 
     @GetMapping("/images/{lang}/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String lang,
                                           @PathVariable ObjectId id) throws IOException {
-        Photo photo = photoService.getPhoto(id);
         LanguageMapper.chooseLang(lang);
+        Photo photo = photoService.getPhoto(id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + photo.getTitle() + "\"")
                 .body(photo.getData());
@@ -101,8 +99,8 @@ public class UserController {
     public byte[] getPhoto(@PathVariable ObjectId id,
                            @PathVariable String lang) throws IOException {
 
-        Photo photo = photoService.getPhoto(id);
         LanguageMapper.chooseLang(lang);
+        Photo photo = photoService.getPhoto(id);
         return photo.getData();
     }
 

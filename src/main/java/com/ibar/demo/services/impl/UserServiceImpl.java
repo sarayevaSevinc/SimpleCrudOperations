@@ -26,21 +26,15 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PhoneNumberServiceImpl phoneService;
     private PhoneNumberRepository phoneRepository;
-    private PhotoRepository photoRepository;
-    private PhotoServiceImpl photoService;
 
 
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
-                           PhoneNumberRepository repository, PhotoRepository photoRepository, PhotoServiceImpl photoService) {
+                           PhoneNumberRepository repository) {
 
         this.userRepository = userRepository;
         this.phoneService = phoneService;
         this.phoneRepository = repository;
-        this.photoRepository = photoRepository;
-        this.photoService = photoService;
-
-
     }
 
 
