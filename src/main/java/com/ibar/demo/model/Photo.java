@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,12 +23,12 @@ public class Photo {
     @Id
     private ObjectId id;
 
-    @Field (name = "userId")
+    @Field(name = "userId")
     private long userId;
 
     @Field(name = "title")
     private String title;
 
     @Field(name = "image")
-    private byte[] data;
+    private Binary data;
 }

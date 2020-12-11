@@ -58,7 +58,7 @@ public class User implements Serializable {
     private int age;
 
     @Column(name = "profilePicture")
-    private String profilePictureUrl;
+    private String profile_picture_url;
 
 
     @Column(name = "birthday")
@@ -74,7 +74,7 @@ public class User implements Serializable {
 
     @CardNumberConstraint
     @Column(name = "cardNumber")
-    private String cardNumber;
+    private String card_number;
 
 
     @GenderConstraint
@@ -107,14 +107,14 @@ public class User implements Serializable {
     public User(Builder builder) {
         this.setName(builder.name);
         this.setSurname(builder.surname);
-        this.setCardNumber(builder.cardNumber);
+        this.setCard_number(builder.cardNumber);
         this.setPin(builder.pin);
         this.setId(builder.id);
         this.setAge(builder.age);
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
         this.setPersisted(builder.persisted);
-        this.setProfilePictureUrl(builder.profilePictureUrl);
+        this.setProfile_picture_url(builder.profilePictureUrl);
 
     }
 

@@ -1,6 +1,7 @@
 package com.ibar.demo.services.impl;
 
 
+import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.exceptions.PhotoNotFound;
 import com.ibar.demo.model.Photo;
@@ -10,12 +11,13 @@ import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhotoRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.PhotoService;
+import com.ibar.demo.utilities.Compressor;
 import com.ibar.demo.utilities.ErrorMapper;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.zip.DataFormatException;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
@@ -30,21 +32,21 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public ObjectId addPhoto(String title, MultipartFile image, long userid) throws IOException {
-        Optional<User> userById = userRepository.getUserById(userid);
+    public String addPhoto(PhotoRequestDTO requestDto) {
+        Optional<User> userById = userRepository.getUserById(requestDto.getUser_id());
         if (userById.isPresent()) {
-
             Photo photo = Photo.builder()
-                    .title(title)
-                    .userId(userid)
-                    .data(image.getBytes())
+                    .title(requestDto.getTitle())
+                    .userId(requestDto.getUser_id())
+                    .data(requestDto.getData())
                     .build();
 
-            ObjectId id = this.photoRepository.save(photo).getId();
+            Photo save = this.photoRepository.save(photo);
+            String url = getUrl(save.getId());
 
-            updateUserAfterAddingPhoto(userById.get(), getUrl(id));
+            updateUserAfterAddingPhoto(userById.get(), url);
 
-            return id;
+            return url;
         }
 
         throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
@@ -52,7 +54,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     public void updateUserAfterAddingPhoto(User user, String url) {
 
-        user.setProfilePictureUrl(url);
+        user.setProfile_picture_url(url);
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
 
@@ -60,8 +62,10 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public Photo getPhoto(ObjectId id) throws IOException {
-        return photoRepository.findById(id).orElseThrow(()-> new PhotoNotFound(ErrorMapper.getProfilePhotoNotFoundByIdError()));
+    public byte[] getPhoto(ObjectId id) throws IOException, DataFormatException {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new PhotoNotFound(ErrorMapper.getProfilePhotoNotFoundByIdError()));
+        return Compressor.decompress(photo.getData().getData());
     }
 
 
@@ -88,8 +92,8 @@ public class PhotoServiceImpl implements PhotoService {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/users/")
-                .path("/images/")
                 .path("/" + StaticVariable.lang + "/")
+                .path("/images/")
                 .path(id.toString())
                 .toUriString();
     }

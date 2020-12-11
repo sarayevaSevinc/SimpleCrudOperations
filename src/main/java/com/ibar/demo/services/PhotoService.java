@@ -1,17 +1,17 @@
 package com.ibar.demo.services;
 
-import com.ibar.demo.controllers.dto.UserResponseDTO;
-import com.ibar.demo.model.Photo;
+import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import java.io.IOException;
+import java.util.zip.DataFormatException;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface PhotoService {
 
-    ObjectId addPhoto(String title, MultipartFile image, long userid) throws IOException;
-    Photo getPhoto(ObjectId id) throws IOException;
+    String addPhoto(PhotoRequestDTO photoRequestDTO) throws IOException;
+
+    Object getPhoto(ObjectId id) throws IOException, DataFormatException;
 
     String getPhotoByUserId(long id);
 

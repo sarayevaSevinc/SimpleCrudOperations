@@ -26,11 +26,11 @@ public class UserResponseDTO {
     private int age;
 
     @ApiModelProperty(notes = "user's phone numbers list", example = "[ { +994778785641 } ] ")
-    private List<PhoneNumberDTO> phoneNumbers;
+    private List<PhoneNumberDTO> phone_numbers;
 
     @ApiModelProperty(notes = "user birthday", example = "27-07-2000")
     private LocalDate birthday;
 
     @ApiModelProperty(notes = "user's gender", example = "W")
-    private String profileImage;
+    private String profile_image;
 }

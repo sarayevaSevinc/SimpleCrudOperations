@@ -33,7 +33,7 @@ public class UserRequestDTO {
     private String pin;
 
     @ApiModelProperty(notes = "user's card Number", example = "124354546")
-    private String cardNumber;
+    private String card_number;
 
 
     @ApiModelProperty(notes = "user's phone number", example = "+99477357458")
