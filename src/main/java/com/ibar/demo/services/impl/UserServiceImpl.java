@@ -1,16 +1,15 @@
 package com.ibar.demo.services.impl;
 
 import com.ibar.demo.controllers.dto.PhoneNumberDTO;
-import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
+import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.model.PhoneNumber;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhoneNumberRepository;
-import com.ibar.demo.repositories.PhotoRepository;
+import com.ibar.demo.repositories.RedisRepository;
 import com.ibar.demo.repositories.UserRepository;
-import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.ErrorMapper;
 import com.ibar.demo.utilities.UserMapper;
@@ -24,39 +23,64 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-    private PhoneNumberServiceImpl phoneService;
-    private PhoneNumberRepository phoneRepository;
-
+    private final UserRepository userRepository;
+    private final PhoneNumberServiceImpl phoneService;
+    private final PhoneNumberRepository phoneRepository;
+    private final RedisRepository redisRepository;
 
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
-                           PhoneNumberRepository repository) {
+                           PhoneNumberRepository repository, RedisRepository redisRepository) {
 
         this.userRepository = userRepository;
         this.phoneService = phoneService;
         this.phoneRepository = repository;
+        this.redisRepository = redisRepository;
     }
 
 
     @Override
     public UserResponseDTO create(UserRequestDTO user) {
-        User save = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
-
-        phoneService.save(phoneService.createPhoneNumber(user.getPhone(), save));
-
-        List<PhoneNumber> byUserId = phoneRepository.findByUserId(save.getId());
-
-        return UserMapper.INSTANCE.mapUsertoUserDTO(save, byUserId);
+        log.info("creating user service has started..");
+        User savedUser = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
+        phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
+        this.redisRepository.addUser(savedUser);
+        List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
+        this.redisRepository.getAllUser();
+        log.info("creating user service has endded...");
+        log.info(savedUser.toString());
+        return UserMapper.INSTANCE.mapUsertoUserDTO(savedUser, byUserId);
 
     }
 
+    public UserResponseDTO saveUser(UserRequestDTO userRequestDTO) {
+        log.info("saving user service has started..");
+        if (userRepository.getUserByPin(userRequestDTO.getPin()).isPresent()) {
+            return updateUser(userRequestDTO);
+        } else {
+            return create(userRequestDTO);
+        }
+    }
+
+
+    public UserResponseDTO getUserById2(long id) {
+        log.info("Searching user in redis....");
+        User user = redisRepository.getUser(id);
+        if (user == null) {
+        return  getUserById(id);
+        } else {
+            log.info("user found in redis...");
+            List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(user.getId());
+            return UserMapper.INSTANCE.mapUsertoUserDTO(user, phonesByUserId);
+        }
+    }
 
     @Override
     public UserResponseDTO getUserById(long id) {
         log.info("Searching user with " + id + " id....");
         Optional<User> userById = userRepository.getUserById(id).filter(x -> x.getStatus() != (Status.DELETED));
         if (userById.isPresent()) {
+            this.redisRepository.addUser(userById.get());
             List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(userById.get().getId());
 
             return UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phonesByUserId);
@@ -78,45 +102,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
+    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO) {
         log.info("Updating user.. ");
-
+        User user = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
 
         log.info("User has been updated.. " + user.getId());
 
         User save = userRepository.save(user);
-
-        return save;
-    }
-
-    public UserResponseDTO updateUserByRequestDTO(UserRequestDTO userRequestDTO) {
-        log.info("Updating user.. ");
-
-        User user  = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
-
-        List<PhoneNumber> byUserId = phoneRepository.findByUserId(user.getId());
-
-        return UserMapper.INSTANCE.mapUsertoUserDTO(updateUser(user), byUserId);
+        List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(save.getId());
+        return UserMapper.INSTANCE.mapUsertoUserDTO(save, phonesByUserId);
     }
 
     public UserResponseDTO addUserPhoneNumber(int id, PhoneNumberDTO number) {
         Optional<User> userById = userRepository.getUserById(id);
-
+        log.info("adding phone number service has started...");
         if (userById.isPresent()) {
 
-            PhoneNumber build = PhoneNumber.builder()
-                    .phone(number.getPhone())
-                    .user(userById.get())
-                    .build();
-
-            log.info(build.getPhone());
-            phoneService.save(build);
-
+            phoneService.save(phoneService.createPhoneNumber(number.getPhone(), userById.get()));
             List<PhoneNumber> phones = phoneRepository.findByUserId(userById.get().getId());
             UserResponseDTO userResponseDTO = UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phones);
 
+            log.info("adding phone number service has endded...");
             return userResponseDTO;
 
         }

@@ -8,9 +8,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface PhoneNumberMapp {
+public interface PhoneNumberMapper {
 
-    PhoneNumberMapp INSTANCE = Mappers.getMapper(PhoneNumberMapp.class);
+    PhoneNumberMapper INSTANCE = Mappers.getMapper(PhoneNumberMapper.class);
 
     PhoneNumberDTO phoneNumberToPhoneNumberDTO(PhoneNumber phoneNumber);
 

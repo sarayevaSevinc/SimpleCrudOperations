@@ -2,6 +2,7 @@ package com.ibar.demo.controllers.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +30,7 @@ public class UserResponseDTO {
     private List<PhoneNumberDTO> phone_numbers;
 
     @ApiModelProperty(notes = "user birthday", example = "27-07-2000")
-    private LocalDate birthday;
+    private String birthday;
 
     @ApiModelProperty(notes = "user's gender", example = "W")
     private String profile_image;

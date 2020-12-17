@@ -23,7 +23,6 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Table(name = "phones")
 public class PhoneNumber implements Serializable {
 

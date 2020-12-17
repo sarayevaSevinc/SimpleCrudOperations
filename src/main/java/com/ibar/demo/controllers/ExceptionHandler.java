@@ -8,6 +8,7 @@ import com.ibar.demo.utilities.ErrorMapper;
 import java.time.format.DateTimeParseException;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,9 +50,16 @@ public class ExceptionHandler {
                 .description(ex.getConstraintViolations().stream().findAny().get().getMessage())
                 .build();
     }
-
+    @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
+    public ExceptionEntity notValidexception(MethodArgumentNotValidException ex,
+                                             WebRequest request) {
+        return ExceptionEntity.builder()
+                .code(404)
+                .description(ex.getBindingResult().getAllErrors().stream().findAny().get().getDefaultMessage())
+                .build();
+    }
     @org.springframework.web.bind.annotation.ExceptionHandler(PhotoNotFound.class)
-    public ExceptionEntity PhotoNotFoundexception() {
+    public ExceptionEntity PhotoNotFoundException() {
         return ExceptionEntity.builder()
                 .code(404)
                 .description(ErrorMapper.getProfilePhotoNotFoundByIdError())

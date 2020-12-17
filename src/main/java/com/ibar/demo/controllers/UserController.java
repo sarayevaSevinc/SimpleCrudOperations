@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
+import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -53,38 +54,37 @@ public class UserController {
 
     @ApiOperation(value = "user", notes = "Get user account by id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @GetMapping("/{lang}/{id}")
-    public ResponseEntity<UserResponseDTO> getUser(@PathVariable String lang,
-                                                   @PathVariable long id) {
+    @GetMapping("/getUser")
+    public ResponseEntity<UserResponseDTO> getUser(@RequestParam String lang,
+                                                   @RequestParam long id) {
         LanguageMapper.chooseLang(lang);
         log.info("getting user with " + id + " id .....");
-        return new ResponseEntity(service.getUserById(id), HttpStatus.OK);
+        return new ResponseEntity(service.getUserById2(id), HttpStatus.OK);
     }
 
 
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/{lang}/add")
-    public ResponseEntity<UserResponseDTO> addUser(@RequestBody UserRequestDTO user,
-                                                   @PathVariable String lang) {
+    @PostMapping("/add")
+    public ResponseEntity<UserResponseDTO> addUser(@Valid @RequestBody UserRequestDTO user,
+                                                   @RequestParam String lang) {
         log.info("adding user ......");
 
         LanguageMapper.chooseLang(lang);
-        return new ResponseEntity<>(service.create(user), HttpStatus.OK);
+        return new ResponseEntity<>(service.saveUser(user), HttpStatus.OK);
     }
 
     @ApiOperation(value = "user", notes = "Adding profil picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = String.class)})
-    @PostMapping(value = "/{lang}/addProfilePhoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> addPhoto(@PathVariable String lang,
+    @PostMapping(value = "/addProfilePhoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addPhoto(@RequestParam String lang,
                                            @RequestPart("photo") PhotoRequestDTO photo,
                                            @RequestPart("file") MultipartFile file)
             throws IOException {
 
-        photo.setData(new Binary(BsonBinarySubType.BINARY, Compressor.compress(file.getBytes())));
-
         LanguageMapper.chooseLang(lang);
 
+        photo.setData(new Binary(BsonBinarySubType.BINARY, Compressor.compress(file.getBytes())));
         String url = photoService.addPhoto(photo);
 
         return new ResponseEntity<>(url, HttpStatus.OK);
@@ -92,7 +92,7 @@ public class UserController {
 
     @ApiOperation(value = "image", notes = "getting image")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = byte.class)})
-    @GetMapping(value = "/{lang}/images/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "{lang}/images/{id}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getFile(@PathVariable String lang,
                           @PathVariable ObjectId id) throws IOException, DataFormatException {
         LanguageMapper.chooseLang(lang);
@@ -100,34 +100,22 @@ public class UserController {
         return photoService.getPhoto(id);
     }
 
-//    @ApiOperation(value = "getting the profile picture", notes = "Get user profile picture by user id")
-//    @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = Photo.class)})
-//    @GetMapping("/{lang}/getProfilePhoto/{id}")
-//    public Object getPhoto(@PathVariable ObjectId id,
-//                           @PathVariable String lang) throws IOException {
-//
-//        LanguageMapper.chooseLang(lang);
-//        Photo photo = photoService.getPhoto(id);
-//        return photo.getData().getData();
-//    }
-
-
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/{lang}/update")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String lang,
+    @PostMapping("/update")
+    public ResponseEntity<UserResponseDTO> updateUser(@RequestParam String lang,
                                                       @RequestBody UserRequestDTO user) {
 
         LanguageMapper.chooseLang(lang);
         log.info("updating user ......");
 
-        return new ResponseEntity<>(service.updateUserByRequestDTO(user), HttpStatus.OK);
+        return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
     }
 
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
-    @PostMapping("/{lang}/addPhoneNumber")
-    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@PathVariable String lang,
+    @PostMapping("/addPhoneNumber")
+    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@RequestParam String lang,
                                                               @RequestParam int id,
                                                               @RequestBody PhoneNumberDTO number) {
 

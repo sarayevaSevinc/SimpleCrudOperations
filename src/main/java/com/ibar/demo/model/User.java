@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
@@ -24,16 +25,21 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.redis.core.RedisHash;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Entity
+@Entity(name = "IBA_USERS")
+@Validated
 @Table(name = "IBA_USERS")
+//@RedisHash("Student")
 public class User implements Serializable {
 
     @Transient
@@ -44,11 +50,9 @@ public class User implements Serializable {
     @Id
     private long id;
 
-    @NameConstraint
     @Column(name = "name")
     private String name;
 
-    @NameConstraint
     @Column(name = "surname")
     private String surname;
 
@@ -67,17 +71,15 @@ public class User implements Serializable {
     private LocalDate birthday;
 
 
-    @PinConstraint
-    @Column(name = "pin")
+    @Column(name = "pin", unique = true)
     private String pin;
 
 
-    @CardNumberConstraint
+
     @Column(name = "cardNumber")
     private String card_number;
 
 
-    @GenderConstraint
     @Column(name = "gender")
     private String gender;
 
@@ -107,14 +109,16 @@ public class User implements Serializable {
     public User(Builder builder) {
         this.setName(builder.name);
         this.setSurname(builder.surname);
-        this.setCard_number(builder.cardNumber);
+        this.setCard_number(builder.card_number);
         this.setPin(builder.pin);
         this.setId(builder.id);
         this.setAge(builder.age);
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
         this.setPersisted(builder.persisted);
-        this.setProfile_picture_url(builder.profilePictureUrl);
+        this.setProfile_picture_url(builder.profile_picture_url==null ?
+                "There is no profil picture for this user" :
+                builder.profile_picture_url);
 
     }
 
@@ -134,12 +138,12 @@ public class User implements Serializable {
         private String name;
         private String surname;
         private int age;
-        private String cardNumber;
+        private String card_number;
         private String pin;
         private LocalDate birthday;
         private String gender;
         private boolean persisted;
-        private String profilePictureUrl;
+        private String profile_picture_url;
 
         public Builder name(String name) {
             this.name = name;
@@ -147,8 +151,8 @@ public class User implements Serializable {
 
         }
 
-        public Builder profilePictureUrl(String profilePictureUrl) {
-            this.profilePictureUrl = profilePictureUrl;
+        public Builder profile_picture_url(String profilePictureUrl) {
+            this.profile_picture_url = profilePictureUrl == null ? "There is no profil picture for this user" : profilePictureUrl;
             return this;
 
         }
@@ -165,8 +169,8 @@ public class User implements Serializable {
 
         }
 
-        public Builder cardNumber(String cardNumber) {
-            this.cardNumber = cardNumber;
+        public Builder card_number(String cardNumber) {
+            this.card_number = cardNumber;
             return this;
 
         }

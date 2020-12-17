@@ -13,13 +13,16 @@ import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.utilities.Compressor;
 import com.ibar.demo.utilities.ErrorMapper;
+import com.ibar.demo.utilities.ProfilePhotoMapper;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
+import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@Log4j2
 @Service
 public class PhotoServiceImpl implements PhotoService {
 
@@ -33,19 +36,18 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public String addPhoto(PhotoRequestDTO requestDto) {
+        log.info("adding profile photo service has started...");
         Optional<User> userById = userRepository.getUserById(requestDto.getUser_id());
         if (userById.isPresent()) {
-            Photo photo = Photo.builder()
-                    .title(requestDto.getTitle())
-                    .userId(requestDto.getUser_id())
-                    .data(requestDto.getData())
-                    .build();
+            Photo photo = ProfilePhotoMapper.INSTANCE.photoDtoToPhoto(requestDto);
+            photo.setUserId(requestDto.getUser_id());
 
             Photo save = this.photoRepository.save(photo);
+
             String url = getUrl(save.getId());
 
             updateUserAfterAddingPhoto(userById.get(), url);
-
+            log.info("adding profile photo service has ended...");
             return url;
         }
 
@@ -53,16 +55,18 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     public void updateUserAfterAddingPhoto(User user, String url) {
-
+        log.info("updating user after adding photo service has started...");
         user.setProfile_picture_url(url);
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
 
         this.userRepository.save(user);
+        log.info("updating user after adding photo service has ended...");
     }
 
     @Override
     public byte[] getPhoto(ObjectId id) throws IOException, DataFormatException {
+        log.info("getting photo service has started...");
         Photo photo = photoRepository.findById(id)
                 .orElseThrow(() -> new PhotoNotFound(ErrorMapper.getProfilePhotoNotFoundByIdError()));
         return Compressor.decompress(photo.getData().getData());
