@@ -1,9 +1,5 @@
 package com.ibar.demo.model;
 
-import com.ibar.demo.annotation.CardNumberConstraint;
-import com.ibar.demo.annotation.GenderConstraint;
-import com.ibar.demo.annotation.NameConstraint;
-import com.ibar.demo.annotation.PinConstraint;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
@@ -25,9 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.redis.core.RedisHash;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,11 +28,9 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Entity(name = "IBA_USERS")
 @Validated
 @Table(name = "IBA_USERS")
-//@RedisHash("Student")
 public class User implements Serializable {
 
     @Transient
@@ -73,7 +64,6 @@ public class User implements Serializable {
 
     @Column(name = "pin", unique = true)
     private String pin;
-
 
 
     @Column(name = "cardNumber")
@@ -116,7 +106,7 @@ public class User implements Serializable {
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
         this.setPersisted(builder.persisted);
-        this.setProfile_picture_url(builder.profile_picture_url==null ?
+        this.setProfile_picture_url(builder.profile_picture_url == null ?
                 "There is no profil picture for this user" :
                 builder.profile_picture_url);
 
@@ -152,7 +142,8 @@ public class User implements Serializable {
         }
 
         public Builder profile_picture_url(String profilePictureUrl) {
-            this.profile_picture_url = profilePictureUrl == null ? "There is no profil picture for this user" : profilePictureUrl;
+            this.profile_picture_url =
+                    profilePictureUrl == null ? "There is no profil picture for this user" : profilePictureUrl;
             return this;
 
         }

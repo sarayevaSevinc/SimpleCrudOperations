@@ -50,6 +50,7 @@ public class ExceptionHandler {
                 .description(ex.getConstraintViolations().stream().findAny().get().getMessage())
                 .build();
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
     public ExceptionEntity notValidexception(MethodArgumentNotValidException ex,
                                              WebRequest request) {
@@ -58,6 +59,7 @@ public class ExceptionHandler {
                 .description(ex.getBindingResult().getAllErrors().stream().findAny().get().getDefaultMessage())
                 .build();
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(PhotoNotFound.class)
     public ExceptionEntity PhotoNotFoundException() {
         return ExceptionEntity.builder()

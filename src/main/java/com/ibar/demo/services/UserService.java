@@ -11,7 +11,7 @@ public interface UserService {
 
     UserResponseDTO create(UserRequestDTO user);
 
-    UserResponseDTO getUserById(long id);
+    UserResponseDTO getUserByIdFromDb(long id);
 
     UserResponseDTO getUserByName(String name);
 

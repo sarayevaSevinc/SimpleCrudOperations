@@ -9,6 +9,7 @@ import com.ibar.demo.model.StaticVariable;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhotoRepository;
+import com.ibar.demo.repositories.RedisRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.utilities.Compressor;
@@ -28,10 +29,13 @@ public class PhotoServiceImpl implements PhotoService {
 
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
+    private final RedisRepository redisRepository;
 
-    public PhotoServiceImpl(PhotoRepository photoRepository, UserRepository userRepository) {
+    public PhotoServiceImpl(PhotoRepository photoRepository, UserRepository userRepository,RedisRepository redisRepository) {
         this.photoRepository = photoRepository;
         this.userRepository = userRepository;
+        this.redisRepository = redisRepository;
+
     }
 
     @Override
@@ -61,6 +65,7 @@ public class PhotoServiceImpl implements PhotoService {
         user.setPersisted(true);
 
         this.userRepository.save(user);
+        this.redisRepository.addUser(user);
         log.info("updating user after adding photo service has ended...");
     }
 

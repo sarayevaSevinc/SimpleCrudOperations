@@ -46,9 +46,9 @@ public class UserServiceImpl implements UserService {
         phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
         this.redisRepository.addUser(savedUser);
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
-        this.redisRepository.getAllUser();
+
         log.info("creating user service has endded...");
-        log.info(savedUser.toString());
+
         return UserMapper.INSTANCE.mapUsertoUserDTO(savedUser, byUserId);
 
     }
@@ -63,11 +63,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public UserResponseDTO getUserById2(long id) {
+    public UserResponseDTO getUserById(long id) {
         log.info("Searching user in redis....");
         User user = redisRepository.getUser(id);
         if (user == null) {
-        return  getUserById(id);
+            return getUserByIdFromDb(id);
+        } else if (user.getStatus().equals(Status.DELETED)) {
+            throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
         } else {
             log.info("user found in redis...");
             List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(user.getId());
@@ -76,7 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO getUserById(long id) {
+    public UserResponseDTO getUserByIdFromDb(long id) {
         log.info("Searching user with " + id + " id....");
         Optional<User> userById = userRepository.getUserById(id).filter(x -> x.getStatus() != (Status.DELETED));
         if (userById.isPresent()) {
