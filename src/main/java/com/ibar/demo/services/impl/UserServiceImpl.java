@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
         this.redisRepository.addUser(savedUser);
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
 
+        log.info("user has created with " +savedUser.getId() + " id");
         log.info("creating user service has endded...");
 
         return UserMapper.INSTANCE.mapUsertoUserDTO(savedUser, byUserId);
@@ -55,8 +56,9 @@ public class UserServiceImpl implements UserService {
 
     public UserResponseDTO saveUser(UserRequestDTO userRequestDTO) {
         log.info("saving user service has started..");
-        if (userRepository.getUserByPin(userRequestDTO.getPin()).isPresent()) {
-            return updateUser(userRequestDTO);
+        Optional<User> userByPin = userRepository.getUserByPin(userRequestDTO.getPin());
+        if (userByPin.isPresent()) {
+            return updateUser(userRequestDTO, userByPin.get());
         } else {
             return create(userRequestDTO);
         }
@@ -104,15 +106,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO,User savedUser) {
         log.info("Updating user.. ");
         User user = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
+        user.setId(savedUser.getId());
+        user.setCreatedTime(savedUser.getCreatedTime());
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
 
-        log.info("User has been updated.. " + user.getId());
-
         User save = userRepository.save(user);
+
+        log.info("User has been updated.. " + save.getId());
         List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(save.getId());
         return UserMapper.INSTANCE.mapUsertoUserDTO(save, phonesByUserId);
     }

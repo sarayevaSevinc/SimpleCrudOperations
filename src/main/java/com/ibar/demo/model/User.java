@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Transient;
@@ -65,6 +64,8 @@ public class User implements Serializable {
     @Column(name = "pin", unique = true)
     private String pin;
 
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "cardNumber")
     private String card_number;
@@ -101,6 +102,7 @@ public class User implements Serializable {
         this.setSurname(builder.surname);
         this.setCard_number(builder.card_number);
         this.setPin(builder.pin);
+        this.setPassword(builder.password);
         this.setId(builder.id);
         this.setAge(builder.age);
         this.setGender(builder.gender);
@@ -130,6 +132,7 @@ public class User implements Serializable {
         private int age;
         private String card_number;
         private String pin;
+        private String password;
         private LocalDate birthday;
         private String gender;
         private boolean persisted;
@@ -150,6 +153,11 @@ public class User implements Serializable {
 
         public Builder age(int age) {
             this.age = age;
+            return this;
+
+        }
+        public Builder password(String password) {
+            this.password = password;
             return this;
 
         }

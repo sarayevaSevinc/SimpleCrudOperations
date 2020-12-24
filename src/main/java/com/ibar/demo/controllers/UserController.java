@@ -109,7 +109,7 @@ public class UserController {
         LanguageMapper.chooseLang(lang);
         log.info("updating user ......");
 
-        return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(service.saveUser(user), HttpStatus.OK);
     }
 
     @ApiOperation(value = "user", notes = "update User")

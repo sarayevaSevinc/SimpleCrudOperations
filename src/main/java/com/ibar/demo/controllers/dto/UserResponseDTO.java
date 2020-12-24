@@ -1,8 +1,6 @@
 package com.ibar.demo.controllers.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

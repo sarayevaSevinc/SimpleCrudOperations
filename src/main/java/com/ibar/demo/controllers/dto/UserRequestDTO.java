@@ -4,6 +4,7 @@ import com.ibar.demo.annotation.CardNumberConstraint;
 import com.ibar.demo.annotation.GenderConstraint;
 import com.ibar.demo.annotation.IsValidConstraint;
 import com.ibar.demo.annotation.NameConstraint;
+import com.ibar.demo.annotation.PasswordConstraint;
 import com.ibar.demo.annotation.PhoneNumberConstraint;
 import com.ibar.demo.annotation.PinConstraint;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,6 +43,10 @@ public class UserRequestDTO {
     @PinConstraint
     @ApiModelProperty(notes = "user's pin ", example = "124354546")
     private String pin;
+
+    @PasswordConstraint
+    @ApiModelProperty(notes = "user's password ", example = "qwety1234")
+    private String password;
 
     @CardNumberConstraint
     @ApiModelProperty(notes = "user's card Number", example = "124354546")
