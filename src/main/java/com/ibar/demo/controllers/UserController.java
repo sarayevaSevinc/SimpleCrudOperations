@@ -62,7 +62,6 @@ public class UserController {
         return new ResponseEntity(service.getUserById(id), HttpStatus.OK);
     }
 
-
     @ApiOperation(value = "user", notes = "Adding user to mongo db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/add")

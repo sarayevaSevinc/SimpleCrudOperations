@@ -32,6 +32,7 @@ import org.springframework.validation.annotation.Validated;
 @Table(name = "IBA_USERS")
 public class User implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
 
