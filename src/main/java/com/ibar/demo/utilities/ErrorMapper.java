@@ -1,53 +1,44 @@
 package com.ibar.demo.utilities;
 
-import com.ibar.demo.model.StaticVariable;
+import static com.ibar.demo.model.StaticVariable.PHONE_NOT_FOUND_WITH_ID;
+import static com.ibar.demo.model.StaticVariable.PHOTO_NOT_FOUND_WITH_ID;
+import static com.ibar.demo.model.StaticVariable.USER_NOT_FOUND_WITH_ID;
+import static com.ibar.demo.model.StaticVariable.USER_NOT_FOUND_WITH_NAME;
+import static com.ibar.demo.model.StaticVariable.lang;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+@Log4j2
 public class ErrorMapper {
-    public static String getUserNotFoundByIdError() {
-        switch (StaticVariable.lang) {
-            case "az":
-                return StaticVariable.az_USER_NOT_FOUND_WITH_ID;
-            case "en":
-                return StaticVariable.en_USER_NOT_FOUND_WITH_ID;
-            case "ru":
-                return StaticVariable.ru_USER_NOT_FOUND_WITH_ID;
-        }
-        return StaticVariable.en_USER_NOT_FOUND_WITH_ID;
+
+    private static Translator translator;
+
+    public ErrorMapper(Translator translator) {
+        this.translator = translator;
     }
 
-    public static String getPhoneNumberNotFoundWithIDError() {
-        switch (StaticVariable.lang) {
-            case "az":
-                return StaticVariable.az_PHONE_NOT_FOUND_WITH_ID;
-            case "en":
-                return StaticVariable.en_PHONE_NOT_FOUND_WITH_ID;
-            case "ru":
-                return StaticVariable.ru_PHONE_NOT_FOUND_WITH_ID;
-        }
-        return StaticVariable.en_PHONE_NOT_FOUND_WITH_ID;
+    public static String getUserNotFoundByIdError() {
+        log.info(lang);
+        String translate = translator.translate(USER_NOT_FOUND_WITH_ID, lang);
+        log.info(translate);
+        return translate;
+
+    }
+
+    public static  String getPhoneNumberNotFoundWithIDError() {
+        return translator.translate(PHONE_NOT_FOUND_WITH_ID, lang);
     }
 
     public static String getUserNotFoundByNameError() {
-        switch (StaticVariable.lang) {
-            case "az":
-                return StaticVariable.az_USER_NOT_FOUND_WITH_NAME;
-            case "en":
-                return StaticVariable.en_USER_NOT_FOUND_WITH_NAME;
-            case "ru":
-                return StaticVariable.ru_USER_NOT_FOUND_WITH_NAME;
-        }
-        return StaticVariable.en_USER_NOT_FOUND_WITH_NAME;
+        return translator.translate(USER_NOT_FOUND_WITH_NAME, lang);
     }
 
     public static String getProfilePhotoNotFoundByIdError() {
-        switch (StaticVariable.lang) {
-            case "az":
-                return StaticVariable.az_PHOTO_NOT_FOUND_WITH_ID;
-            case "en":
-                return StaticVariable.en_PHOTO_NOT_FOUND_WITH_ID;
-            case "ru":
-                return StaticVariable.ru_PHOTO_NOT_FOUND_WITH_ID;
-        }
-        return StaticVariable.en_PHOTO_NOT_FOUND_WITH_ID;
+        return translator.translate(PHOTO_NOT_FOUND_WITH_ID, lang);
     }
 }

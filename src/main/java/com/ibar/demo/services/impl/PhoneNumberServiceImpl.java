@@ -9,6 +9,7 @@ import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.PhoneNumberService;
 import com.ibar.demo.utilities.ErrorMapper;
 import com.ibar.demo.utilities.PhoneNumberMapper;
+import com.ibar.demo.utilities.Translator;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
@@ -16,14 +17,20 @@ import org.springframework.stereotype.Service;
 
 @Log4j2
 @Service
+
 public class PhoneNumberServiceImpl implements PhoneNumberService {
 
-    PhoneNumberRepository phoneNumberRepository;
-    UserRepository userRepository;
+    private final PhoneNumberRepository phoneNumberRepository;
+    private final UserRepository userRepository;
+    private final Translator translator;
+    private final ErrorMapper errorMapper;
 
-    public PhoneNumberServiceImpl(PhoneNumberRepository phoneNumberRepository, UserRepository userRepository) {
+    public PhoneNumberServiceImpl(PhoneNumberRepository phoneNumberRepository, UserRepository userRepository,
+                                  Translator translator) {
         this.phoneNumberRepository = phoneNumberRepository;
         this.userRepository = userRepository;
+        this.translator = translator;
+        this.errorMapper = new ErrorMapper(translator);
     }
 
 
@@ -45,7 +52,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
         if (byId.isPresent()) {
             return PhoneNumberMapper.INSTANCE.phoneNumberToPhoneNumberDTO(byId.get());
         }
-        throw new PhoneNumberWithIdNotFound(ErrorMapper.getPhoneNumberNotFoundWithIDError());
+        throw new PhoneNumberWithIdNotFound(errorMapper.getPhoneNumberNotFoundWithIDError());
     }
 
     @Override
@@ -54,6 +61,6 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
         if (!byUserId.isEmpty()) {
             return PhoneNumberMapper.INSTANCE.mapPhoneNumbersToPhoneNumberDto(byUserId);
         }
-        throw new PhoneNumberWithIdNotFound(ErrorMapper.getPhoneNumberNotFoundWithIDError());
+        throw new PhoneNumberWithIdNotFound(errorMapper.getPhoneNumberNotFoundWithIDError());
     }
 }

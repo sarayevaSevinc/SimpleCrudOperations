@@ -12,6 +12,7 @@ import com.ibar.demo.repositories.RedisRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.ErrorMapper;
+import com.ibar.demo.utilities.Translator;
 import com.ibar.demo.utilities.UserMapper;
 import java.util.List;
 import java.util.Optional;
@@ -27,17 +28,19 @@ public class UserServiceImpl implements UserService {
     private final PhoneNumberServiceImpl phoneService;
     private final PhoneNumberRepository phoneRepository;
     private final RedisRepository redisRepository;
-
+    private final Translator translator;
+    private final ErrorMapper errorMapper;
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
-                           PhoneNumberRepository repository, RedisRepository redisRepository) {
-
+                           PhoneNumberRepository phoneRepository,
+                           RedisRepository redisRepository, Translator translator) {
         this.userRepository = userRepository;
         this.phoneService = phoneService;
-        this.phoneRepository = repository;
+        this.phoneRepository = phoneRepository;
         this.redisRepository = redisRepository;
+        this.translator = translator;
+        this.errorMapper = new ErrorMapper(translator);
     }
-
 
     @Override
     public UserResponseDTO create(UserRequestDTO user) {
@@ -47,7 +50,7 @@ public class UserServiceImpl implements UserService {
         this.redisRepository.addUser(savedUser);
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
 
-        log.info("user has created with " +savedUser.getId() + " id");
+        log.info("user has created with " + savedUser.getId() + " id");
         log.info("creating user service has endded...");
 
         return UserMapper.INSTANCE.mapUsertoUserDTO(savedUser, byUserId);
@@ -71,7 +74,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return getUserByIdFromDb(id);
         } else if (user.getStatus().equals(Status.DELETED)) {
-            throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
+            throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
         } else {
             log.info("user found in redis...");
             List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(user.getId());
@@ -89,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
             return UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phonesByUserId);
         }
-        throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
+        throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
     }
 
     @Override
@@ -102,11 +105,11 @@ public class UserServiceImpl implements UserService {
 
             return UserMapper.INSTANCE.mapUsertoUserDTO(userByName.get(), phonesByUserId);
         }
-        throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByNameError());
+        throw new AccountNotFoundException(errorMapper.getUserNotFoundByNameError());
     }
 
     @Override
-    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO,User savedUser) {
+    public UserResponseDTO updateUser(UserRequestDTO userRequestDTO, User savedUser) {
         log.info("Updating user.. ");
         User user = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
         user.setId(savedUser.getId());
@@ -134,7 +137,7 @@ public class UserServiceImpl implements UserService {
             return userResponseDTO;
 
         }
-        throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
+        throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
     }
 
     @Override

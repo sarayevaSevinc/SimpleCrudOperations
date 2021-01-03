@@ -1,6 +1,5 @@
 package com.ibar.demo.services.impl;
 
-
 import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.exceptions.PhotoNotFound;
@@ -15,6 +14,7 @@ import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.utilities.Compressor;
 import com.ibar.demo.utilities.ErrorMapper;
 import com.ibar.demo.utilities.ProfilePhotoMapper;
+import com.ibar.demo.utilities.Translator;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
@@ -30,12 +30,17 @@ public class PhotoServiceImpl implements PhotoService {
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
     private final RedisRepository redisRepository;
+    private final ErrorMapper errorMapper;
+    private final Translator translator;
 
-    public PhotoServiceImpl(PhotoRepository photoRepository, UserRepository userRepository,RedisRepository redisRepository) {
+    public PhotoServiceImpl(PhotoRepository photoRepository, UserRepository userRepository,
+                            RedisRepository redisRepository,
+                            Translator translator) {
         this.photoRepository = photoRepository;
         this.userRepository = userRepository;
         this.redisRepository = redisRepository;
-
+        this.translator = translator;
+        this.errorMapper = new ErrorMapper(translator);
     }
 
     @Override
@@ -55,7 +60,7 @@ public class PhotoServiceImpl implements PhotoService {
             return url;
         }
 
-        throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
+        throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
     }
 
     public void updateUserAfterAddingPhoto(User user, String url) {
@@ -73,7 +78,7 @@ public class PhotoServiceImpl implements PhotoService {
     public byte[] getPhoto(ObjectId id) throws IOException, DataFormatException {
         log.info("getting photo service has started...");
         Photo photo = photoRepository.findById(id)
-                .orElseThrow(() -> new PhotoNotFound(ErrorMapper.getProfilePhotoNotFoundByIdError()));
+                .orElseThrow(() -> new PhotoNotFound(errorMapper.getProfilePhotoNotFoundByIdError()));
         return Compressor.decompress(photo.getData().getData());
     }
 
@@ -83,7 +88,7 @@ public class PhotoServiceImpl implements PhotoService {
         if (userRepository.getUserById(id).isPresent()) {
             return getPhotoUrl(id);
         }
-        throw new AccountNotFoundException(ErrorMapper.getUserNotFoundByIdError());
+        throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
 
     }
 
@@ -92,7 +97,6 @@ public class PhotoServiceImpl implements PhotoService {
         if (photo.isPresent()) {
             return getUrl(photo.get().getId());
         }
-
         return "There is no profile picture for this user.";
 
     }

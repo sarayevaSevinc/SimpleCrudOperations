@@ -7,6 +7,7 @@ import com.ibar.demo.exceptions.PhotoNotFound;
 import com.ibar.demo.utilities.ErrorMapper;
 import java.time.format.DateTimeParseException;
 import javax.validation.ConstraintViolationException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,6 +19,8 @@ import org.springframework.web.context.request.WebRequest;
 @RestController
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ExceptionHandler {
+
+
 
     @org.springframework.web.bind.annotation.ExceptionHandler(AccountNotFoundException.class)
     public ExceptionEntity handleAccountNotFoundException() {
