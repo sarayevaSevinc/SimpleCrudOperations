@@ -11,7 +11,7 @@ public interface PhotoService {
 
     String addPhoto(PhotoRequestDTO photoRequestDTO, long id) throws IOException;
 
-    Object getPhoto(ObjectId id) throws IOException, DataFormatException;
+    byte[] getPhoto(ObjectId id) throws IOException, DataFormatException;
 
     String getPhotoByUserId(long id);
 

@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
         this.myPasswordEncoder = new MyPasswordEncoder();
     }
 
-    @Override
     public UserResponseDTO create(UserRequestDTO user) {
         log.info("creating user service has started..");
         user.setPassword(myPasswordEncoder.passwordEncoder().encode(user.getPassword()));
@@ -61,6 +60,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
     public UserResponseDTO saveUser(UserRequestDTO userRequestDTO) {
         log.info("saving user service has started..");
         Optional<User> userByPin = userRepository.getUserByPin(userRequestDTO.getPin());
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
+    @Override
     public UserResponseDTO getUserById(long id) {
         log.info("Searching user in redis....");
         User user = redisRepository.getUser(id);
@@ -86,7 +86,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
     public UserResponseDTO getUserByIdFromDb(long id) {
         log.info("Searching user with " + id + " id....");
         Optional<User> userById = userRepository.getUserById(id).filter(x -> x.getStatus() != (Status.DELETED));
@@ -97,19 +96,6 @@ public class UserServiceImpl implements UserService {
             return UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phonesByUserId);
         }
         throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
-    }
-
-    @Override
-    public UserResponseDTO getUserByName(String name) {
-        log.info("Searching user with " + name + " name....");
-
-        Optional<User> userByName = userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED));
-        if (userByName.isPresent()) {
-            List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(userByName.get().getId());
-
-            return UserMapper.INSTANCE.mapUsertoUserDTO(userByName.get(), phonesByUserId);
-        }
-        throw new AccountNotFoundException(errorMapper.getUserNotFoundByNameError());
     }
 
     @Override
@@ -128,6 +114,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.INSTANCE.mapUsertoUserDTO(save, phonesByUserId);
     }
 
+    @Override
     public UserResponseDTO addUserPhoneNumber(int id, PhoneNumberDTO number) {
         Optional<User> userById = userRepository.getUserById(id);
         log.info("adding phone number service has started...");
@@ -164,4 +151,15 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public UserResponseDTO getUserByName(String name) {
+        log.info("Searching user with " + name + " name....");
+
+        Optional<User> userByName = userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED));
+        if (userByName.isPresent()) {
+            List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(userByName.get().getId());
+
+            return UserMapper.INSTANCE.mapUsertoUserDTO(userByName.get(), phonesByUserId);
+        }
+        throw new AccountNotFoundException(errorMapper.getUserNotFoundByNameError());
+    }
 }

@@ -2,14 +2,14 @@ package com.ibar.demo.controllers;
 
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 
+import com.ibar.demo.constants.StaticVariable;
 import com.ibar.demo.controllers.dto.PhoneNumberDTO;
 import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
-import com.ibar.demo.constants.StaticVariable;
 import com.ibar.demo.model.User;
-import com.ibar.demo.services.impl.PhotoServiceImpl;
-import com.ibar.demo.services.impl.UserServiceImpl;
+import com.ibar.demo.services.PhotoService;
+import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.Compressor;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,10 +46,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(value = "Simple Crud Api")
 public class UserController {
 
-    private final UserServiceImpl service;
-    private final PhotoServiceImpl photoService;
+    private final UserService service;
+    private final PhotoService photoService;
 
-    public UserController(UserServiceImpl service, PhotoServiceImpl photoService) {
+    public UserController(UserService service, PhotoService photoService) {
 
         this.service = service;
         this.photoService = photoService;
@@ -127,7 +127,8 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/addPhoneNumber")
     public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@RequestParam int id,
-                                                              @RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az") String lang,
+                                                              @RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az")
+                                                                      String lang,
                                                               @RequestBody PhoneNumberDTO number) {
 
         StaticVariable.lang = lang;
