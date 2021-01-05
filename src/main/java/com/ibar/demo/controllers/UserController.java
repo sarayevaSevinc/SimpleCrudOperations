@@ -6,7 +6,7 @@ import com.ibar.demo.controllers.dto.PhoneNumberDTO;
 import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
-import com.ibar.demo.model.StaticVariable;
+import com.ibar.demo.constants.StaticVariable;
 import com.ibar.demo.model.User;
 import com.ibar.demo.services.impl.PhotoServiceImpl;
 import com.ibar.demo.services.impl.UserServiceImpl;
@@ -25,6 +25,7 @@ import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,11 @@ public class UserController {
         this.photoService = photoService;
     }
 
+    @RequestMapping({"/hello"})
+    public String firstPage() {
+        return "Hello World";
+    }
+
     @ApiOperation(value = "user", notes = "Get user account by id")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @GetMapping("/getUser")
@@ -77,29 +83,30 @@ public class UserController {
         return new ResponseEntity<>(service.saveUser(user), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "user", notes = "Adding profil picture to db")
+    @ApiOperation(value = "user", notes = "Adding profile picture to db")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = String.class)})
     @PostMapping(value = "/addProfilePhoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPhoto(@RequestPart("photo") PhotoRequestDTO photo,
                                            @RequestPart("file") MultipartFile file,
+                                           Authentication auth,
                                            @RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az") String lang)
             throws IOException {
 
         StaticVariable.lang = lang;
-
+        User user = (User) auth.getPrincipal();
         photo.setData(new Binary(BsonBinarySubType.BINARY, Compressor.compress(file.getBytes())));
-        String url = photoService.addPhoto(photo);
+        String url = photoService.addPhoto(photo, user.getId());
 
         return new ResponseEntity<>(url, HttpStatus.OK);
     }
 
     @ApiOperation(value = "image", notes = "getting image")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = byte.class)})
-    @GetMapping(value = "{lang}/images/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/images/{id}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getFile(@RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az") String lang,
-                          @PathVariable ObjectId id) throws IOException, DataFormatException {
+                          @PathVariable ObjectId id,
+                          Authentication auth) throws IOException, DataFormatException {
         StaticVariable.lang = lang;
-
         return photoService.getPhoto(id);
     }
 
@@ -119,9 +126,8 @@ public class UserController {
     @ApiOperation(value = "user", notes = "update User")
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
     @PostMapping("/addPhoneNumber")
-    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@RequestHeader(value = ACCEPT_LANGUAGE, defaultValue =
-            "az") String lang,
-                                                              @RequestParam int id,
+    public ResponseEntity<UserResponseDTO> addUserPhoneNumber(@RequestParam int id,
+                                                              @RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az") String lang,
                                                               @RequestBody PhoneNumberDTO number) {
 
         StaticVariable.lang = lang;

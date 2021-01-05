@@ -2,12 +2,12 @@ package com.ibar.demo.controllers;
 
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.exceptions.ExceptionEntity;
+import com.ibar.demo.exceptions.IdDoesNotEqualException;
 import com.ibar.demo.exceptions.PhoneNumberWithIdNotFound;
 import com.ibar.demo.exceptions.PhotoNotFound;
 import com.ibar.demo.utilities.ErrorMapper;
 import java.time.format.DateTimeParseException;
 import javax.validation.ConstraintViolationException;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -68,6 +68,14 @@ public class ExceptionHandler {
         return ExceptionEntity.builder()
                 .code(404)
                 .description(ErrorMapper.getProfilePhotoNotFoundByIdError())
+                .build();
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(IdDoesNotEqualException.class)
+    public ExceptionEntity IdDoesNotEqualException() {
+        return ExceptionEntity.builder()
+                .code(404)
+                .description(ErrorMapper.getIdDoesNotEqualError())
                 .build();
     }
 }

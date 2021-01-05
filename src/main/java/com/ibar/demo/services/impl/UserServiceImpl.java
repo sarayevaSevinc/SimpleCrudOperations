@@ -1,5 +1,6 @@
 package com.ibar.demo.services.impl;
 
+import com.ibar.demo.config.securityConfig.MyPasswordEncoder;
 import com.ibar.demo.controllers.dto.PhoneNumberDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final RedisRepository redisRepository;
     private final Translator translator;
     private final ErrorMapper errorMapper;
+    private final MyPasswordEncoder myPasswordEncoder;
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
                            PhoneNumberRepository phoneRepository,
@@ -40,11 +42,13 @@ public class UserServiceImpl implements UserService {
         this.redisRepository = redisRepository;
         this.translator = translator;
         this.errorMapper = new ErrorMapper(translator);
+        this.myPasswordEncoder = new MyPasswordEncoder();
     }
 
     @Override
     public UserResponseDTO create(UserRequestDTO user) {
         log.info("creating user service has started..");
+        user.setPassword(myPasswordEncoder.passwordEncoder().encode(user.getPassword()));
         User savedUser = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
         phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
         this.redisRepository.addUser(savedUser);
@@ -152,6 +156,11 @@ public class UserServiceImpl implements UserService {
             log.info("user has been deleted...." + user.get().getId());
             userRepository.save(user.get());
         }
+    }
+
+    @Override
+    public Optional<User> getUserByPin(String pin) {
+        return userRepository.getUserByPin(pin);
     }
 
 

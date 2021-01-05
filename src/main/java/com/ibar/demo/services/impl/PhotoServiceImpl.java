@@ -2,9 +2,9 @@ package com.ibar.demo.services.impl;
 
 import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
+import com.ibar.demo.exceptions.IdDoesNotEqualException;
 import com.ibar.demo.exceptions.PhotoNotFound;
 import com.ibar.demo.model.Photo;
-import com.ibar.demo.model.StaticVariable;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhotoRepository;
@@ -44,24 +44,28 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public String addPhoto(PhotoRequestDTO requestDto) {
+    public String addPhoto(PhotoRequestDTO requestDto, long id) {
         log.info("adding profile photo service has started...");
+        if (requestDto.getUser_id() != id) {
+            throw new IdDoesNotEqualException(errorMapper.getIdDoesNotEqualError());
+        }
         Optional<User> userById = userRepository.getUserById(requestDto.getUser_id());
-        if (userById.isPresent()) {
-            Photo photo = ProfilePhotoMapper.INSTANCE.photoDtoToPhoto(requestDto);
-            photo.setUserId(requestDto.getUser_id());
-
-            Photo save = this.photoRepository.save(photo);
-
-            String url = getUrl(save.getId());
-
-            updateUserAfterAddingPhoto(userById.get(), url);
-            log.info("adding profile photo service has ended...");
-            return url;
+        if (!userById.isPresent()) {
+            throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
         }
 
-        throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
+        Photo photo = ProfilePhotoMapper.INSTANCE.photoDtoToPhoto(requestDto);
+        photo.setUserId(requestDto.getUser_id());
+
+        Photo save = this.photoRepository.save(photo);
+
+        String url = getUrl(save.getId());
+
+        updateUserAfterAddingPhoto(userById.get(), url);
+        log.info("adding profile photo service has ended...");
+        return url;
     }
+
 
     public void updateUserAfterAddingPhoto(User user, String url) {
         log.info("updating user after adding photo service has started...");
@@ -105,7 +109,6 @@ public class PhotoServiceImpl implements PhotoService {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/users/")
-                .path("/" + StaticVariable.lang + "/")
                 .path("/images/")
                 .path(id.toString())
                 .toUriString();

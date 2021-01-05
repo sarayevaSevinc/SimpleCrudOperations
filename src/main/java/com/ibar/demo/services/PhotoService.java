@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface PhotoService {
 
-    String addPhoto(PhotoRequestDTO photoRequestDTO) throws IOException;
+    String addPhoto(PhotoRequestDTO photoRequestDTO, long id) throws IOException;
 
     Object getPhoto(ObjectId id) throws IOException, DataFormatException;
 
