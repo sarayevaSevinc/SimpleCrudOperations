@@ -48,7 +48,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             }
         } else {
-            log.info("JWT Token does not begin with Bearer String");
+            log.info("header is null or JWT Token does not begin with Bearer String");
         }
 
         // Once we get the token validate it.

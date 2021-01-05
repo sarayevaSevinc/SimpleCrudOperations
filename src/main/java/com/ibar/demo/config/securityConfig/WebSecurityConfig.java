@@ -4,6 +4,7 @@ package com.ibar.demo.config.securityConfig;
 import com.ibar.demo.config.securityConfig.JwtRequestFilter;
 import com.ibar.demo.config.securityConfig.MyPasswordEncoder;
 import com.ibar.demo.model.JwtAuthenticationEntryPoint;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,18 +21,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+   // @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Autowired
+    //@Autowired
     private UserDetailsService jwtUserDetailsService;
 
-    @Autowired
+    //@Autowired
     private JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
+    //@Autowired
     private MyPasswordEncoder myPasswordEncoder;
 
     @Autowired
