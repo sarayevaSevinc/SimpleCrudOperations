@@ -24,6 +24,9 @@ public class UserResponseDTO {
     @ApiModelProperty(notes = "user age", example = "20")
     private int age;
 
+    @ApiModelProperty(notes = "user email", example = "20")
+    private String email;
+
     @ApiModelProperty(notes = "user's phone numbers list", example = "[ { +994778785641 } ] ")
     private List<PhoneNumberDTO> phone_numbers;
 

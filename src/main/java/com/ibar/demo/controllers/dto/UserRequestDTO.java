@@ -1,15 +1,13 @@
 package com.ibar.demo.controllers.dto;
 
 import com.ibar.demo.annotation.CardNumberConstraint;
+import com.ibar.demo.annotation.EmailConstraint;
 import com.ibar.demo.annotation.GenderConstraint;
-import com.ibar.demo.annotation.IsValidConstraint;
 import com.ibar.demo.annotation.NameConstraint;
 import com.ibar.demo.annotation.PasswordConstraint;
 import com.ibar.demo.annotation.PhoneNumberConstraint;
 import com.ibar.demo.annotation.PinConstraint;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.Valid;
-import javax.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +58,10 @@ public class UserRequestDTO {
     @GenderConstraint
     @ApiModelProperty(notes = "user's gender", example = "W")
     private String gender;
+
+    @EmailConstraint
+    @ApiModelProperty(notes = "user email", example = "sarayeva.sevinc@gmail.com")
+    private String email;
 
 
 }

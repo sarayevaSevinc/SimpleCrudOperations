@@ -1,8 +1,8 @@
 package com.ibar.demo.controllers;
 
 import com.ibar.demo.config.securityConfig.JwtTokenUtil;
-import com.ibar.demo.model.JwtRequest;
-import com.ibar.demo.model.JwtResponse;
+import com.ibar.demo.controllers.dto.PhoneNumberDTO;
+import com.ibar.demo.controllers.dto.JwtResponseDTO;
 import com.ibar.demo.services.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody PhoneNumberDTO.JwtRequestDTO authenticationRequest) throws Exception {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -40,7 +40,7 @@ public class JwtAuthenticationController {
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponseDTO(token));
     }
 
     private void authenticate(String username, String password) throws Exception {

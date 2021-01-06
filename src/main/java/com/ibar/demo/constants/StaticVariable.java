@@ -8,5 +8,6 @@ public final class StaticVariable {
     public static final String PHOTO_NOT_FOUND_WITH_ID = "PHOTO_NOT_FOUND_WITH_ID";
     public static String lang;
     public static final String ID_DOES_NOT_EQUAL = "ID_DOES_NOT_EQUAL";
+    public static final long JWT_TOKEN_VALIDITY=90;
 
 }

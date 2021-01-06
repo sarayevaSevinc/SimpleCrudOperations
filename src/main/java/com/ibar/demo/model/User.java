@@ -82,6 +82,8 @@ public class User implements Serializable, UserDetails {
     @Column(name = "status")
     private Status status;
 
+    @Column(name = "email")
+    private String email;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
     @CreationTimestamp
@@ -111,6 +113,7 @@ public class User implements Serializable, UserDetails {
         this.setAge(builder.age);
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
+        this.setEmail(builder.email);
         this.setPersisted(builder.persisted);
         this.setProfile_picture_url(builder.profile_picture_url == null ?
                 "There is no profil picture for this user" :
@@ -170,11 +173,17 @@ public class User implements Serializable, UserDetails {
         private String password;
         private LocalDate birthday;
         private String gender;
+        private String email;
         private boolean persisted;
         private String profile_picture_url;
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+
+        }
+        public Builder email(String email) {
+            this.email = email;
             return this;
 
         }

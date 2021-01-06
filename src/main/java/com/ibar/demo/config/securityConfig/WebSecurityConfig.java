@@ -1,8 +1,5 @@
 package com.ibar.demo.config.securityConfig;
 
-
-import com.ibar.demo.config.securityConfig.JwtRequestFilter;
-import com.ibar.demo.config.securityConfig.MyPasswordEncoder;
 import com.ibar.demo.model.JwtAuthenticationEntryPoint;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

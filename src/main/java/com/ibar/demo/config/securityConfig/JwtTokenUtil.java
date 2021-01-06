@@ -1,6 +1,6 @@
 package com.ibar.demo.config.securityConfig;
 
-
+import static com.ibar.demo.constants.StaticVariable.JWT_TOKEN_VALIDITY;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenUtil implements Serializable {
     private static  final long serialVersionUID = -2550185165626007488L;
-    public static final long JWT_TOKEN_VALIDITY=90;
+
 
     @Value("${jwt.secret}")
     private String secret;

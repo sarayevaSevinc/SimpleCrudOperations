@@ -32,6 +32,7 @@ public interface UserMapper {
                 .name(user.getName())
                 .surname(user.getSurname())
                 .age(user.getAge())
+                .email(user.getEmail())
                 .birthday(user.getBirthday().format(DateTimeFormatter.ofPattern("d/MM/yyyy")))
                 .phone_numbers(collect)
                 .profile_image(user.getProfile_picture_url())
