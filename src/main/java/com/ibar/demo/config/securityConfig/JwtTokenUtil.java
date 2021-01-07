@@ -1,6 +1,7 @@
 package com.ibar.demo.config.securityConfig;
 
 import static com.ibar.demo.constants.StaticVariable.JWT_TOKEN_VALIDITY;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,24 +16,27 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-    private static  final long serialVersionUID = -2550185165626007488L;
+    private static final long serialVersionUID = -2550185165626007488L;
 
 
     @Value("${jwt.secret}")
     private String secret;
 
-    public String getUsernameFromToken(String token){
-        return getClaimFromToken(token, Claims :: getSubject);
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
 
     }
-    public Date getExpirationDateFromToken(String token){
-        return getClaimFromToken(token, Claims :: getExpiration);
+
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
 
     }
+
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }

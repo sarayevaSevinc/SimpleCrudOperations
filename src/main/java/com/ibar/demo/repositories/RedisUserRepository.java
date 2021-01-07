@@ -11,33 +11,32 @@ import org.springframework.stereotype.Repository;
 
 @Log4j2
 @Repository
-public class RedisRepository {
-    private final String REDIS_KEY = "USER";
+public class RedisUserRepository {
+    private final String REDIS_USER_KEY = "USER";
     private RedisTemplate<String, Object> redisTemplate;
     private HashOperations hashOperations;
 
-    public RedisRepository(RedisTemplate redisTemplate) {
+    public RedisUserRepository(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
-        this.hashOperations = this.redisTemplate.opsForHash();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(Serializer.createRedisSerializerForLongClass());
-
         redisTemplate.setHashValueSerializer(Serializer.createRedisSerializerForUserClass());
+        this.hashOperations = this.redisTemplate.opsForHash();
     }
 
     public void addUser(User user) {
         log.info("adding user to redis...");
-        this.hashOperations.put(REDIS_KEY, user.getId(), user);
+        this.hashOperations.put(REDIS_USER_KEY, user.getId(), user);
     }
 
     public User getUser(long userId) {
         log.info("getting user from redis");
-        return (User) this.hashOperations.get(REDIS_KEY, userId);
+        return (User) this.hashOperations.get(REDIS_USER_KEY, userId);
     }
 
     public void getAllUser() {
         log.info("getting all users from redis");
-        Map<Long, User> map = this.hashOperations.entries(REDIS_KEY);
+        Map<Long, User> map = this.hashOperations.entries(REDIS_USER_KEY);
         for (Map.Entry<Long, User> entry : map.entrySet()) {
             log.info(entry.getKey() + " " + entry.getValue().getName());
         }

@@ -9,8 +9,9 @@ import com.ibar.demo.model.PhoneNumber;
 import com.ibar.demo.model.Status;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhoneNumberRepository;
-import com.ibar.demo.repositories.RedisRepository;
+import com.ibar.demo.repositories.RedisUserRepository;
 import com.ibar.demo.repositories.UserRepository;
+import com.ibar.demo.services.OtpService;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.ErrorMapper;
 import com.ibar.demo.utilities.Translator;
@@ -28,20 +29,22 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PhoneNumberServiceImpl phoneService;
     private final PhoneNumberRepository phoneRepository;
-    private final RedisRepository redisRepository;
+    private final RedisUserRepository redisUserRepository;
     private final Translator translator;
     private final ErrorMapper errorMapper;
     private final MyPasswordEncoder myPasswordEncoder;
+    private final OtpService otpService;
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
                            PhoneNumberRepository phoneRepository,
-                           RedisRepository redisRepository, Translator translator) {
+                           RedisUserRepository redisUserRepository, Translator translator, OtpService otpService) {
         this.userRepository = userRepository;
         this.phoneService = phoneService;
         this.phoneRepository = phoneRepository;
-        this.redisRepository = redisRepository;
+        this.redisUserRepository = redisUserRepository;
         this.translator = translator;
         this.errorMapper = new ErrorMapper(translator);
+        this.otpService = otpService;
         this.myPasswordEncoder = new MyPasswordEncoder();
     }
 
@@ -50,9 +53,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(myPasswordEncoder.passwordEncoder().encode(user.getPassword()));
         User savedUser = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
         phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
-        this.redisRepository.addUser(savedUser);
+        //this.redisUserRepository.addUser(savedUser);
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
-
+        otpService.sendOtp(savedUser);
         log.info("user has created with " + savedUser.getId() + " id");
         log.info("creating user service has endded...");
 
@@ -74,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO getUserById(long id) {
         log.info("Searching user in redis....");
-        User user = redisRepository.getUser(id);
+        User user = redisUserRepository.getUser(id);
         if (user == null) {
             return getUserByIdFromDb(id);
         } else if (user.getStatus().equals(Status.DELETED)) {
@@ -86,11 +89,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     public UserResponseDTO getUserByIdFromDb(long id) {
         log.info("Searching user with " + id + " id....");
         Optional<User> userById = userRepository.getUserById(id).filter(x -> x.getStatus() != (Status.DELETED));
         if (userById.isPresent()) {
-            this.redisRepository.addUser(userById.get());
+            this.redisUserRepository.addUser(userById.get());
             List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(userById.get().getId());
 
             return UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phonesByUserId);
@@ -148,18 +152,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserByPin(String pin) {
         return userRepository.getUserByPin(pin);
-    }
-
-
-    public UserResponseDTO getUserByName(String name) {
-        log.info("Searching user with " + name + " name....");
-
-        Optional<User> userByName = userRepository.getUserByName(name).filter(x -> x.getStatus() != (Status.DELETED));
-        if (userByName.isPresent()) {
-            List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(userByName.get().getId());
-
-            return UserMapper.INSTANCE.mapUsertoUserDTO(userByName.get(), phonesByUserId);
-        }
-        throw new AccountNotFoundException(errorMapper.getUserNotFoundByNameError());
     }
 }

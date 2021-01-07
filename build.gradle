@@ -78,6 +78,8 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.1.Final'
     compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.2.0.RELEASE'
+
 }
 test {
     useJUnitPlatform()

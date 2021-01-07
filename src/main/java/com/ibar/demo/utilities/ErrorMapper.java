@@ -1,6 +1,7 @@
 package com.ibar.demo.utilities;
 
 import static com.ibar.demo.constants.StaticVariable.ID_DOES_NOT_EQUAL;
+import static com.ibar.demo.constants.StaticVariable.OTP_NOT_FOUND;
 import static com.ibar.demo.constants.StaticVariable.PHONE_NOT_FOUND_WITH_ID;
 import static com.ibar.demo.constants.StaticVariable.PHOTO_NOT_FOUND_WITH_ID;
 import static com.ibar.demo.constants.StaticVariable.USER_NOT_FOUND_WITH_ID;
@@ -36,5 +37,8 @@ public class ErrorMapper {
 
     public static String getProfilePhotoNotFoundByIdError() {
         return translator.translate(PHOTO_NOT_FOUND_WITH_ID, lang);
+    }
+    public static String getOtpVerificationError() {
+        return translator.translate(OTP_NOT_FOUND, lang);
     }
 }

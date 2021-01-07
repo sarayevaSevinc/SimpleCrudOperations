@@ -8,6 +8,7 @@ import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.model.User;
+import com.ibar.demo.services.OtpService;
 import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.Compressor;
@@ -48,11 +49,13 @@ public class UserController {
 
     private final UserService service;
     private final PhotoService photoService;
+    private final OtpService otpService;
 
-    public UserController(UserService service, PhotoService photoService) {
+    public UserController(UserService service, PhotoService photoService, OtpService otpService) {
 
         this.service = service;
         this.photoService = photoService;
+        this.otpService = otpService;
     }
 
     @RequestMapping({"/hello"})
@@ -104,8 +107,7 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = byte.class)})
     @GetMapping(value = "/images/{id}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getFile(@RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az") String lang,
-                          @PathVariable ObjectId id,
-                          Authentication auth) throws IOException, DataFormatException {
+                          @PathVariable ObjectId id) throws IOException, DataFormatException {
         StaticVariable.lang = lang;
         return photoService.getPhoto(id);
     }
@@ -121,6 +123,20 @@ public class UserController {
         log.info("updating user ......");
 
         return new ResponseEntity<>(service.saveUser(user), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "user", notes = "verify Otp")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = StaticVariable.MESSAGE, response = User.class)})
+    @PostMapping("/verifyOtp")
+    public ResponseEntity<?> verifyOtp(
+            @RequestHeader(value = ACCEPT_LANGUAGE, defaultValue = "az") String lang,
+            @RequestParam long userId,
+            @RequestParam String otp) {
+
+        StaticVariable.lang = lang;
+        log.info("updating user ......");
+
+        return new ResponseEntity<>(otpService.verifyOTP(userId, otp), HttpStatus.OK);
     }
 
     @ApiOperation(value = "user", notes = "update User")
