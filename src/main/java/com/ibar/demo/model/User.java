@@ -1,5 +1,12 @@
 package com.ibar.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +40,7 @@ import org.springframework.validation.annotation.Validated;
 @Entity(name = "IBA_USERS")
 @Validated
 @Table(name = "IBA_USERS")
+@JsonDeserialize(as =  User.class)
 public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
@@ -62,6 +70,9 @@ public class User implements Serializable, UserDetails {
     @Column(name = "birthday")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Past
+    @JsonProperty("birthday")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate birthday;
 
 
@@ -89,6 +100,9 @@ public class User implements Serializable, UserDetails {
     @CreationTimestamp
     @Column(name = "createdTime")
     @PastOrPresent
+    @JsonProperty("createdTime")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdTime;
 
 
@@ -96,6 +110,9 @@ public class User implements Serializable, UserDetails {
     @UpdateTimestamp
     @Column(name = "updatedTime")
     @PastOrPresent
+    @JsonProperty("updatedTime")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updatedTime;
 
 

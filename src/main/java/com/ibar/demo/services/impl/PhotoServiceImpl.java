@@ -31,7 +31,6 @@ public class PhotoServiceImpl implements PhotoService {
     private final UserRepository userRepository;
     private final RedisUserRepository redisUserRepository;
     private final ErrorMapper errorMapper;
-    private final Translator translator;
 
     public PhotoServiceImpl(PhotoRepository photoRepository, UserRepository userRepository,
                             RedisUserRepository redisUserRepository,
@@ -39,7 +38,6 @@ public class PhotoServiceImpl implements PhotoService {
         this.photoRepository = photoRepository;
         this.userRepository = userRepository;
         this.redisUserRepository = redisUserRepository;
-        this.translator = translator;
         this.errorMapper = new ErrorMapper(translator);
     }
 

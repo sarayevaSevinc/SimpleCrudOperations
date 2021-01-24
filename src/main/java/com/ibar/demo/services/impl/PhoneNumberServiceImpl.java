@@ -22,14 +22,12 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
 
     private final PhoneNumberRepository phoneNumberRepository;
     private final UserRepository userRepository;
-    private final Translator translator;
     private final ErrorMapper errorMapper;
 
     public PhoneNumberServiceImpl(PhoneNumberRepository phoneNumberRepository, UserRepository userRepository,
                                   Translator translator) {
         this.phoneNumberRepository = phoneNumberRepository;
         this.userRepository = userRepository;
-        this.translator = translator;
         this.errorMapper = new ErrorMapper(translator);
     }
 

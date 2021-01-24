@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     private final PhoneNumberServiceImpl phoneService;
     private final PhoneNumberRepository phoneRepository;
     private final RedisUserRepository redisUserRepository;
-    private final Translator translator;
     private final ErrorMapper errorMapper;
     private final MyPasswordEncoder myPasswordEncoder;
     private final OtpService otpService;
@@ -42,7 +41,6 @@ public class UserServiceImpl implements UserService {
         this.phoneService = phoneService;
         this.phoneRepository = phoneRepository;
         this.redisUserRepository = redisUserRepository;
-        this.translator = translator;
         this.errorMapper = new ErrorMapper(translator);
         this.otpService = otpService;
         this.myPasswordEncoder = new MyPasswordEncoder();
@@ -53,7 +51,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(myPasswordEncoder.passwordEncoder().encode(user.getPassword()));
         User savedUser = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
         phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
-        //this.redisUserRepository.addUser(savedUser);
+        this.redisUserRepository.addUser(savedUser);
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
         otpService.sendOtp(savedUser);
         log.info("user has created with " + savedUser.getId() + " id");
@@ -110,7 +108,6 @@ public class UserServiceImpl implements UserService {
         user.setCreatedTime(savedUser.getCreatedTime());
         user.setStatus(Status.UPDATED);
         user.setPersisted(true);
-
         User save = userRepository.save(user);
 
         log.info("User has been updated.. " + save.getId());

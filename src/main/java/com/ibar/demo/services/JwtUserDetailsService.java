@@ -18,14 +18,12 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 
     private final UserServiceImpl userService;
-    private final Translator translator;
     private final ErrorMapper errorMapper;
 
     @Autowired
     public JwtUserDetailsService(UserServiceImpl userService, Translator translator) {
 
         this.userService = userService;
-        this.translator = translator;
         this.errorMapper = new ErrorMapper(translator);
     }
 

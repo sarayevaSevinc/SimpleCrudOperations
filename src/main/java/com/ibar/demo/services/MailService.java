@@ -17,7 +17,7 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("UrlShortenerAppBySevinc");
         message.setTo(email_address);
-        message.setSubject("Password Reset Link");
+        message.setSubject("One Time Password");
         message.setText("Hi!  Welcome to Gmail of Future " +
                 "This is your one time password: ".concat(otp)
                 .concat("\n Sincerely, !"));

@@ -1,36 +1,36 @@
 package com.ibar.demo.repositories;
 
-import com.ibar.demo.config.Serializer;
+
+import com.ibar.demo.model.OTP;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.redisson.Redisson;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Log4j2
 public class RedisOtpRepository {
     private final String REDIS_OTP_KEY = "OTP";
-    private RedisTemplate<String, Object> redisTemplate;
-    private HashOperations hashOperations;
+    private RedissonClient client;
+    private RMap<String, OTP> otps;
 
-    public RedisOtpRepository(RedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-        this.hashOperations = this.redisTemplate.opsForHash();
+    public RedisOtpRepository() {
+        this.client = Redisson.create();
+        this.otps = client.getMap(REDIS_OTP_KEY);
 
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(Serializer.createRedisSerializerForLongClass());
 
-        redisTemplate.setHashValueSerializer((new StringRedisSerializer()));
     }
 
-    public void addOtp(long userId, String otp) {
+    public void addOtp(long userId, OTP otp) {
         log.info("adding otp to redis...");
-        hashOperations.put(REDIS_OTP_KEY, userId, otp);
+        otps.put(String.valueOf(userId), otp);
     }
 
-    public String getOtp(long userId) {
+    public OTP getOtp(long userId) {
         log.info("getting otp from redis...");
-        return (String) hashOperations.get(REDIS_OTP_KEY, userId);
+        Object test = otps.remove(String.valueOf(userId));
+        log.info(test == null);
+        return (OTP) test;
     }
 }

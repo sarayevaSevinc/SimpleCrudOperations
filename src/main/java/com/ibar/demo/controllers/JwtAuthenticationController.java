@@ -68,9 +68,11 @@ public class JwtAuthenticationController {
             log.info("i am here");
             throw new AccountNotFoundException(errorMapper.getUserNotFoundByNameError());
         }
-        if(!user.get().getPassword().equals(authenticationRequest.getPassword())){
+        log.info(user.get().getPassword());
+        log.info(passwordEncoder.passwordEncoder().encode(authenticationRequest.getPassword()));
+        if(!user.get().getPassword().equals(passwordEncoder.passwordEncoder().encode(authenticationRequest.getPassword()))){
             log.info("i am here 2");
-            throw new AccountNotFoundException(errorMapper.getUserNotFoundByNameError());
+            throw new AccountNotFoundException(errorMapper.getPhoneNumberNotFoundWithIDError());
         }
         otpService.sendOtp(user.get());
 
