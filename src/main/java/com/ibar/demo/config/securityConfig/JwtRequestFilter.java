@@ -4,6 +4,8 @@ import com.ibar.demo.services.JwtUserDetailsService;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
@@ -13,12 +15,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Component
 @Log4j2
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtRequestFilter extends GenericFilterBean {
 
 
     private final JwtUserDetailsService jwtUserDetailsService;
@@ -30,11 +33,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         this.jwtUserDetailsService = jwtUserDetailsService;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
 
-        final String requestTokenHeader = request.getHeader("Authorization");
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+         HttpServletRequest req= (HttpServletRequest) request;
+        final String requestTokenHeader =  req.getHeader("Authorization");
 
         String pin = null;
         String jwtToken = null;
@@ -52,7 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         // Once we get the token validate it.
-        if (pin != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (pin != null && SecurityContextHolder.getContext().getAuthentication() == null && requestTokenHeader!=null) {
 
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(pin);
 
@@ -62,7 +66,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }

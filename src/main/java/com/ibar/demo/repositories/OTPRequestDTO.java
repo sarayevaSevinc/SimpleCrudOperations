@@ -1,6 +1,5 @@
-package com.ibar.demo.model;
+package com.ibar.demo.repositories;
 
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,10 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OTP {
-    private long id;
+public class OTPRequestDTO {
     private long user_id;
-    private String otp;
-    private LocalDateTime createdTime;
-    private int expired;
+    private String email;
 }

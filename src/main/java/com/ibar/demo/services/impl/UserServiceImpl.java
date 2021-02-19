@@ -11,7 +11,7 @@ import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.PhoneNumberRepository;
 import com.ibar.demo.repositories.RedisUserRepository;
 import com.ibar.demo.repositories.UserRepository;
-import com.ibar.demo.services.OtpService;
+import com.ibar.demo.services.TokenService;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.ErrorMapper;
 import com.ibar.demo.utilities.Translator;
@@ -32,17 +32,17 @@ public class UserServiceImpl implements UserService {
     private final RedisUserRepository redisUserRepository;
     private final ErrorMapper errorMapper;
     private final MyPasswordEncoder myPasswordEncoder;
-    private final OtpService otpService;
+    private final TokenService tokenService;
 
     public UserServiceImpl(UserRepository userRepository, PhoneNumberServiceImpl phoneService,
                            PhoneNumberRepository phoneRepository,
-                           RedisUserRepository redisUserRepository, Translator translator, OtpService otpService) {
+                           RedisUserRepository redisUserRepository, Translator translator, TokenService tokenService) {
         this.userRepository = userRepository;
         this.phoneService = phoneService;
         this.phoneRepository = phoneRepository;
         this.redisUserRepository = redisUserRepository;
         this.errorMapper = new ErrorMapper(translator);
-        this.otpService = otpService;
+        this.tokenService = tokenService;
         this.myPasswordEncoder = new MyPasswordEncoder();
     }
 
@@ -52,8 +52,10 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
         phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
         this.redisUserRepository.addUser(savedUser);
+        log.info("i am here :D");
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
-        otpService.sendOtp(savedUser);
+        log.info("test test");
+        tokenService.sendOtp(savedUser);
         log.info("user has created with " + savedUser.getId() + " id");
         log.info("creating user service has endded...");
 

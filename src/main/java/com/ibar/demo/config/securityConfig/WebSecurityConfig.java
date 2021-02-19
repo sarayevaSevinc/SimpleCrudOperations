@@ -49,6 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/getUser").permitAll()
                 .antMatchers("/users/images/*").permitAll()
                 .antMatchers("/users/verifyOtp").permitAll()
+                .antMatchers("/opt/create-otp").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .sessionManagement()

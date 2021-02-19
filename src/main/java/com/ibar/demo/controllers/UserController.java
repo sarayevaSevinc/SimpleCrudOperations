@@ -8,7 +8,7 @@ import com.ibar.demo.controllers.dto.PhotoRequestDTO;
 import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.model.User;
-import com.ibar.demo.services.OtpService;
+import com.ibar.demo.services.TokenService;
 import com.ibar.demo.services.PhotoService;
 import com.ibar.demo.services.UserService;
 import com.ibar.demo.utilities.Compressor;
@@ -49,13 +49,13 @@ public class UserController {
 
     private final UserService service;
     private final PhotoService photoService;
-    private final OtpService otpService;
+    private final TokenService tokenService;
 
-    public UserController(UserService service, PhotoService photoService, OtpService otpService) {
+    public UserController(UserService service, PhotoService photoService, TokenService tokenService) {
 
         this.service = service;
         this.photoService = photoService;
-        this.otpService = otpService;
+        this.tokenService = tokenService;
     }
 
     @RequestMapping({"/hello"})
@@ -136,7 +136,7 @@ public class UserController {
         StaticVariable.lang = lang;
         log.info("updating user ......");
 
-        return new ResponseEntity<>(otpService.verifyOTP(userId, otp), HttpStatus.OK);
+        return new ResponseEntity<>(tokenService.verifyOTP(userId, otp), HttpStatus.OK);
     }
 
     @ApiOperation(value = "user", notes = "update User")
