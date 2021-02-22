@@ -12,5 +12,6 @@ public final class StaticVariable {
     public static final long JWT_TOKEN_VALIDITY=90;
     public static  final String LOGIN_MESSAGE = "We've send the otp your email. Please, check your email";
 
+    public static final String SUCCESS_MESSAGE = "OTP was sent to your email. Please, check your inbox";
 
 }

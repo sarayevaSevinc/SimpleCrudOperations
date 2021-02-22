@@ -27,17 +27,6 @@ public class ErrorMapper {
         return translator.translate(ID_DOES_NOT_EQUAL, lang);
     }
 
-    public static  String getPhoneNumberNotFoundWithIDError() {
-        return translator.translate(PHONE_NOT_FOUND_WITH_ID, lang);
-    }
-
-    public static String getUserNotFoundByNameError() {
-        return translator.translate(USER_NOT_FOUND_WITH_NAME, lang);
-    }
-
-    public static String getProfilePhotoNotFoundByIdError() {
-        return translator.translate(PHOTO_NOT_FOUND_WITH_ID, lang);
-    }
     public static String getOtpVerificationError() {
         return translator.translate(OTP_NOT_FOUND, lang);
     }
