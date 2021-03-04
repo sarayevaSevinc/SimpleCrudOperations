@@ -5,8 +5,19 @@ import com.ibar.demo.model.Photo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface ProfilePhotoMapper {
+
+public class ProfilePhotoMapper {
     ProfilePhotoMapper INSTANCE = Mappers.getMapper(ProfilePhotoMapper.class);
-    Photo photoDtoToPhoto(PhotoRequestDTO photoRequestDTO);
+    public static Photo photoDtoToPhoto(PhotoRequestDTO photoRequestDTO) {
+        if ( photoRequestDTO == null ) {
+            return null;
+        }
+
+        Photo photo = new Photo();
+
+        photo.setTitle( photoRequestDTO.getTitle() );
+        photo.setData( photoRequestDTO.getData() );
+
+        return photo;
+    }
 }

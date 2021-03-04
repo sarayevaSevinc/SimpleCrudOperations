@@ -4,11 +4,10 @@ import com.ibar.demo.config.securityConfig.JwtTokenUtil;
 import com.ibar.demo.controllers.dto.JwtResponseDTO;
 import com.ibar.demo.exceptions.AccountNotFoundException;
 import com.ibar.demo.exceptions.OtpVerificationException;
-import com.ibar.demo.model.OTP;
 import com.ibar.demo.model.Token;
 import com.ibar.demo.model.User;
 import com.ibar.demo.repositories.OTPRepository;
-import com.ibar.demo.repositories.OTPRequestDTO;
+import com.ibar.demo.controllers.dto.OTPDTO;
 import com.ibar.demo.repositories.TokenRepository;
 import com.ibar.demo.repositories.UserRepository;
 import com.ibar.demo.utilities.ErrorMapper;
@@ -20,17 +19,15 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @Service
 public class TokenService {
-    private final MailService mailService;
     private final UserRepository userRepository;
     private final ErrorMapper errorMapper;
     private final JwtTokenUtil jwtTokenUtil;
     private final TokenRepository tokenRepository;
     private final OTPRepository otpRepository;
 
-    public TokenService(UserRepository userRepository, MailService mailService,
+    public TokenService(UserRepository userRepository,
                         Translator translator, JwtTokenUtil jwtTokenUtil, TokenRepository tokenRepository,
                         OTPRepository otpRepository) {
-        this.mailService = mailService;
         this.errorMapper = new ErrorMapper(translator);
         this.userRepository = userRepository;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -39,7 +36,7 @@ public class TokenService {
     }
 
     public void sendOtp(User user) {
-      otpRepository.createOtp(OTPRequestDTO.builder()
+      otpRepository.createOtp(OTPDTO.builder()
       .email(user.getEmail())
       .user_id(user.getId())
       .build());

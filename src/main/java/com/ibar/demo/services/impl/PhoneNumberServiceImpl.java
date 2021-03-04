@@ -34,7 +34,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
 
     @Override
     public PhoneNumberDTO save(PhoneNumber phoneNumber) {
-        return PhoneNumberMapper.INSTANCE.phoneNumberToPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
+        return PhoneNumberMapper.phoneNumberToPhoneNumberDTO(phoneNumberRepository.save(phoneNumber));
     }
 
     public PhoneNumber createPhoneNumber(String phoneNumber, User save) {
@@ -48,7 +48,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
     public PhoneNumberDTO getPhoneNumberById(int id) {
         Optional<PhoneNumber> byId = phoneNumberRepository.findById(id);
         if (byId.isPresent()) {
-            return PhoneNumberMapper.INSTANCE.phoneNumberToPhoneNumberDTO(byId.get());
+            return PhoneNumberMapper.phoneNumberToPhoneNumberDTO(byId.get());
         }
         throw new PhoneNumberWithIdNotFound(errorMapper.getPhoneNumberNotFoundWithIDError());
     }
@@ -57,7 +57,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
     public List<PhoneNumberDTO> getPhoneNumberByUser(long userid) {
         List<PhoneNumber> byUserId = phoneNumberRepository.findByUserId(userid);
         if (!byUserId.isEmpty()) {
-            return PhoneNumberMapper.INSTANCE.mapPhoneNumbersToPhoneNumberDto(byUserId);
+            return PhoneNumberMapper.mapPhoneNumbersToPhoneNumberDto(byUserId);
         }
         throw new PhoneNumberWithIdNotFound(errorMapper.getPhoneNumberNotFoundWithIDError());
     }

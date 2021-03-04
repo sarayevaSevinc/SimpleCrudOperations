@@ -5,6 +5,7 @@ import com.ibar.demo.controllers.dto.UserRequestDTO;
 import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.model.PhoneNumber;
 import com.ibar.demo.model.User;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +13,34 @@ import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface UserMapper {
+
+public class UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    User requestDtoToUser(UserRequestDTO userRequestDTO);
+        public static User requestDtoToUser(UserRequestDTO userRequestDTO) {
+            if ( userRequestDTO == null ) {
+                return null;
+            }
 
-    default UserResponseDTO mapUsertoUserDTO(User user, List<PhoneNumber> phoneNumbers) {
+            User.Builder user = User.build();
+
+            user.name( userRequestDTO.getName() );
+            user.email( userRequestDTO.getEmail() );
+            user.age( userRequestDTO.getAge() );
+            user.password( userRequestDTO.getPassword() );
+            user.surname( userRequestDTO.getSurname() );
+            user.card_number( userRequestDTO.getCard_number() );
+            user.pin( userRequestDTO.getPin() );
+            if ( userRequestDTO.getBirthday() != null ) {
+                user.birthday( LocalDate.parse( userRequestDTO.getBirthday() ) );
+            }
+            user.gender( userRequestDTO.getGender() );
+
+            return user.build();
+        }
+
+
+    public static UserResponseDTO mapUsertoUserDTO(User user, List<PhoneNumber> phoneNumbers) {
         if (user == null) {
             return null;
         }

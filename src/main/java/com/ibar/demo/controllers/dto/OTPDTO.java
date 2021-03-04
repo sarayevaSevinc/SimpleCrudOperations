@@ -1,4 +1,4 @@
-package com.ibar.demo.repositories;
+package com.ibar.demo.controllers.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OTPRequestDTO {
+public class OTPDTO {
     private long user_id;
     private String email;
 }

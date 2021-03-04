@@ -7,16 +7,26 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface PhoneNumberMapper {
+
+public class PhoneNumberMapper {
 
     PhoneNumberMapper INSTANCE = Mappers.getMapper(PhoneNumberMapper.class);
 
-    PhoneNumberDTO phoneNumberToPhoneNumberDTO(PhoneNumber phoneNumber);
+    public static PhoneNumberDTO phoneNumberToPhoneNumberDTO(PhoneNumber phoneNumber) {
+        if ( phoneNumber == null ) {
+            return null;
+        }
 
-    PhoneNumber phoneNumberDTOToPhoneNumber(PhoneNumberDTO phoneNumberDTO);
+        PhoneNumberDTO phoneNumberDTO = new PhoneNumberDTO();
 
-    default List<PhoneNumberDTO> mapPhoneNumbersToPhoneNumberDto(List<PhoneNumber> phoneNumbers){
+        phoneNumberDTO.setPhone( phoneNumber.getPhone() );
+
+        return phoneNumberDTO;
+    }
+
+
+
+    public static List<PhoneNumberDTO> mapPhoneNumbersToPhoneNumberDto(List<PhoneNumber> phoneNumbers){
         List<PhoneNumberDTO> phoneNumberDTOS = new ArrayList<>();
 
         for (PhoneNumber number : phoneNumbers) {

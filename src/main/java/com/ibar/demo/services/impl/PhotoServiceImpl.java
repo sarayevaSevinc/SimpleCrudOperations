@@ -52,7 +52,7 @@ public class PhotoServiceImpl implements PhotoService {
             throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
         }
 
-        Photo photo = ProfilePhotoMapper.INSTANCE.photoDtoToPhoto(requestDto);
+        Photo photo = ProfilePhotoMapper.photoDtoToPhoto(requestDto);
         photo.setUserId(requestDto.getUser_id());
 
         Photo save = this.photoRepository.save(photo);

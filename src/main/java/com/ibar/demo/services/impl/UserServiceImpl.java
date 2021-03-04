@@ -49,17 +49,15 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO create(UserRequestDTO user) {
         log.info("creating user service has started..");
         user.setPassword(myPasswordEncoder.passwordEncoder().encode(user.getPassword()));
-        User savedUser = userRepository.save(UserMapper.INSTANCE.requestDtoToUser(user));
+        User savedUser = userRepository.save(UserMapper.requestDtoToUser(user));
         phoneService.save(phoneService.createPhoneNumber(user.getPhone(), savedUser));
         this.redisUserRepository.addUser(savedUser);
-        log.info("i am here :D");
         List<PhoneNumber> byUserId = phoneRepository.findByUserId(savedUser.getId());
-        log.info("test test");
         tokenService.sendOtp(savedUser);
         log.info("user has created with " + savedUser.getId() + " id");
         log.info("creating user service has endded...");
 
-        return UserMapper.INSTANCE.mapUsertoUserDTO(savedUser, byUserId);
+        return UserMapper.mapUsertoUserDTO(savedUser, byUserId);
 
     }
 
@@ -85,7 +83,7 @@ public class UserServiceImpl implements UserService {
         } else {
             log.info("user found in redis...");
             List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(user.getId());
-            return UserMapper.INSTANCE.mapUsertoUserDTO(user, phonesByUserId);
+            return UserMapper.mapUsertoUserDTO(user, phonesByUserId);
         }
     }
 
@@ -97,7 +95,7 @@ public class UserServiceImpl implements UserService {
             this.redisUserRepository.addUser(userById.get());
             List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(userById.get().getId());
 
-            return UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phonesByUserId);
+            return UserMapper.mapUsertoUserDTO(userById.get(), phonesByUserId);
         }
         throw new AccountNotFoundException(errorMapper.getUserNotFoundByIdError());
     }
@@ -105,7 +103,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO updateUser(UserRequestDTO userRequestDTO, User savedUser) {
         log.info("Updating user.. ");
-        User user = UserMapper.INSTANCE.requestDtoToUser(userRequestDTO);
+        User user = UserMapper.requestDtoToUser(userRequestDTO);
         user.setId(savedUser.getId());
         user.setCreatedTime(savedUser.getCreatedTime());
         user.setStatus(Status.UPDATED);
@@ -114,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
         log.info("User has been updated.. " + save.getId());
         List<PhoneNumber> phonesByUserId = phoneRepository.findByUserId(save.getId());
-        return UserMapper.INSTANCE.mapUsertoUserDTO(save, phonesByUserId);
+        return UserMapper.mapUsertoUserDTO(save, phonesByUserId);
     }
 
     @Override
@@ -125,7 +123,7 @@ public class UserServiceImpl implements UserService {
 
             phoneService.save(phoneService.createPhoneNumber(number.getPhone(), userById.get()));
             List<PhoneNumber> phones = phoneRepository.findByUserId(userById.get().getId());
-            UserResponseDTO userResponseDTO = UserMapper.INSTANCE.mapUsertoUserDTO(userById.get(), phones);
+            UserResponseDTO userResponseDTO = UserMapper.mapUsertoUserDTO(userById.get(), phones);
 
             log.info("adding phone number service has endded...");
             return userResponseDTO;
