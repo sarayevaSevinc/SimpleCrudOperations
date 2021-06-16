@@ -1,26 +1,25 @@
 package com.ibar.demo.services;
 
+import com.ibar.demo.controllers.dto.PhoneNumberDTO;
+import com.ibar.demo.controllers.dto.UserRequestDTO;
+import com.ibar.demo.controllers.dto.UserResponseDTO;
 import com.ibar.demo.model.User;
-import org.springframework.stereotype.Service;
+import java.util.Optional;
 
-@Service
+
 public interface UserService {
 
+    UserResponseDTO saveUser(UserRequestDTO userRequestDTO);
 
-    User create(User user);
+    UserResponseDTO getUserById(long id);
 
-    User getUserById(long id);
-
-    User getUserByName(String name);
-
-    User updateUser(User user);
+    UserResponseDTO updateUser(UserRequestDTO user, User savedUser);
 
     void deleteUserById(long id);
 
+    Optional<User> getUserByPin(String pin);
 
-
-
-
+    UserResponseDTO addUserPhoneNumber(int id, PhoneNumberDTO number);
 
 
 }

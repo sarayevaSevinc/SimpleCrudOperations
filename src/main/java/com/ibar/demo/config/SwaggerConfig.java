@@ -2,14 +2,14 @@ package com.ibar.demo.config;
 
 import static java.util.Collections.singletonList;
 import static springfox.documentation.builders.PathSelectors.any;
+import static springfox.documentation.builders.RequestHandlerSelectors.withClassAnnotation;
 
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
@@ -33,12 +33,13 @@ public class SwaggerConfig {
     private static final String GLOBAL = "global";
     private static final String ACCESS_EVERYTHING = "accessEverything";
 
+
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ibar.demo"))
-                .paths(PathSelectors.regex("/.*"))
+                .apis(withClassAnnotation(RestController.class))
+                .paths(any())
                 .build()
                 .securitySchemes(Arrays.asList(apiKey()))
                 .securityContexts(singletonList(securityContext()))

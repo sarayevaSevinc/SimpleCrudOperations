@@ -1,139 +1,182 @@
 package com.ibar.demo.model;
 
-import io.swagger.annotations.ApiModelProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.domain.Persistable;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Document(collection = "IBA_USERS")
-public class User implements Serializable, Persistable<Long> {
+@Entity(name = "IBA_USERS")
+@Validated
+@Table(name = "IBA_USERS")
+@JsonDeserialize(as =  User.class)
+public class User implements Serializable, UserDetails {
 
+    private static final long serialVersionUID = 1L;
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
 
-    @ApiModelProperty(notes = "user id", example = "123")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "PersonSequence")
+    @Column(name = "id")
     @Id
     private long id;
 
-    @ApiModelProperty(notes = "user name", example = "Eli")
-    @Field("name")
-    @NotNull
+    @Column(name = "name")
     private String name;
 
-    @ApiModelProperty(notes = "user surname", example = "Eliyev")
-    @Field("surname")
+    @Column(name = "surname")
     private String surname;
 
 
-    @ApiModelProperty(notes = "user age", example = "20")
-    @Field("age")
+    @Min(value = 18, message = "Age should not be less than 18")
+    @Column(name = "age")
     private int age;
 
+    @Column(name = "profilePicture")
+    private String profile_picture_url;
 
-    @ApiModelProperty(notes = "user birthday", example = "27-07-2000")
-    @Field("birthday")
+
+    @Column(name = "birthday")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Past
+    @JsonProperty("birthday")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate birthday;
 
-    @ApiModelProperty(notes = "user pin", example = "AZE24347855")
-    @Field("pin")
-    @NotNull
+
+    @Column(name = "pin", unique = true)
     private String pin;
 
-    @ApiModelProperty(notes = "user card number", example = "1234567891234567")
-    @Field("cardNumber")
-    private String cardNumber;
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "cardNumber")
+    private String card_number;
 
 
-    @ApiModelProperty(notes = "user gender", example = "WOMAN")
-    @Field("gender")
+    @Column(name = "gender")
     private String gender;
 
-    @ApiModelProperty(notes = "user phone number", example = "+994501234567")
-    @Field("phone")
-    private String phone;
 
-    @ApiModelProperty(notes = "user account status", example = "CREATED")
-    @Field("status")
+    @Column(name = "status")
     private Status status;
 
+    @Column(name = "email")
+    private String email;
 
-    @ApiModelProperty(notes = "account created time", example = "02-12-20200 16:57")
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
-    @CreatedDate
-    @Field("createdTime")
+    @CreationTimestamp
+    @Column(name = "createdTime")
     @PastOrPresent
+    @JsonProperty("createdTime")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdTime;
 
-    @ApiModelProperty(notes = "account created time", example = "02-12-20200 16:58")
+
     @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm")
-    @LastModifiedDate
-    @Field("updatedTime")
+    @UpdateTimestamp
+    @Column(name = "updatedTime")
     @PastOrPresent
+    @JsonProperty("updatedTime")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updatedTime;
 
-    @ApiModelProperty(notes = "is account persisted", example = "true")
-    @Field("persisted")
+
+    @Column(name = "persisted")
     private boolean persisted;
 
-    @ApiModelProperty(notes = "account profile photo link", example = "google.com/feoifegfkrnk")
-    @Field("profilPhoto")
-    private String profilPhotoLink;
 
     public User(Builder builder) {
         this.setName(builder.name);
         this.setSurname(builder.surname);
-        this.setPhone(builder.phone);
-        this.setCardNumber(builder.cardNumber);
+        this.setCard_number(builder.card_number);
         this.setPin(builder.pin);
+        this.setPassword(builder.password);
         this.setId(builder.id);
         this.setAge(builder.age);
         this.setGender(builder.gender);
         this.setBirthday(builder.birthday);
+        this.setEmail(builder.email);
         this.setPersisted(builder.persisted);
-        this.setProfilPhotoLink(builder.profilPhotoLink);
+        this.setProfile_picture_url(builder.profile_picture_url == null ?
+                "There is no profil picture for this user" :
+                builder.profile_picture_url);
 
-    }
-
-    @Override
-    public boolean isNew() {
-        if (!persisted) {
-            this.setStatus(Status.CREATED);
-        }
-        return !persisted;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
     }
 
     public static Builder build() {
         return new Builder();
+    }
+
+    @PrePersist
+    void preInsert() {
+        if (this.status == null) {
+            this.status = Status.CREATED;
+        }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return pin;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
 
@@ -142,28 +185,40 @@ public class User implements Serializable, Persistable<Long> {
         private String name;
         private String surname;
         private int age;
-        private String cardNumber;
+        private String card_number;
         private String pin;
-        private String phone;
+        private String password;
         private LocalDate birthday;
         private String gender;
+        private String email;
         private boolean persisted;
-        private String profilPhotoLink;
+        private String profile_picture_url;
 
         public Builder name(String name) {
             this.name = name;
             return this;
 
         }
+        public Builder email(String email) {
+            this.email = email;
+            return this;
 
-        public Builder profilPhoto(String profilPhotoLink) {
-            this.profilPhotoLink = profilPhotoLink;
+        }
+
+        public Builder profile_picture_url(String profilePictureUrl) {
+            this.profile_picture_url =
+                    profilePictureUrl == null ? "There is no profil picture for this user" : profilePictureUrl;
             return this;
 
         }
 
         public Builder age(int age) {
             this.age = age;
+            return this;
+
+        }
+        public Builder password(String password) {
+            this.password = password;
             return this;
 
         }
@@ -174,8 +229,8 @@ public class User implements Serializable, Persistable<Long> {
 
         }
 
-        public Builder cardNumber(String cardNumber) {
-            this.cardNumber = cardNumber;
+        public Builder card_number(String cardNumber) {
+            this.card_number = cardNumber;
             return this;
 
         }
@@ -186,11 +241,6 @@ public class User implements Serializable, Persistable<Long> {
 
         }
 
-        public Builder phone(String phone) {
-            this.phone = phone;
-            return this;
-
-        }
 
         public Builder persisted(boolean persisted) {
             this.persisted = persisted;
